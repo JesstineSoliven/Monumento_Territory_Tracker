@@ -118,22 +118,30 @@ export default function AnnouncePage() {
 
 function TerritoryRow({ territory }: { territory: Territory }) {
   const statusColors: Record<string, string> = {
-    'open': 'bg-yellow-100 text-yellow-800',
+    'announced': 'bg-orange-100 text-orange-800',
     'in-progress': 'bg-blue-100 text-blue-800',
     'completed': 'bg-green-100 text-green-800',
+    'rejected': 'bg-red-100 text-red-800',
   }
 
+  const dateOpts: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric', year: 'numeric' }
+
   const announcedDate = territory.announcedAt?.toDate?.()
-  const dateStr = announcedDate
-    ? announcedDate.toLocaleDateString('en-US', {
-        month: 'short',
-        day: 'numeric',
-        year: 'numeric',
-      })
-    : '—'
+  const dateStr = announcedDate ? announcedDate.toLocaleDateString('en-US', dateOpts) : '—'
+
+  const targetDate = territory.targetCompletionDate?.toDate?.()
+  const targetStr = targetDate ? targetDate.toLocaleDateString('en-US', dateOpts) : null
+
+  // Check if overdue (target date has passed and territory is still in-progress)
+  const isOverdue =
+    territory.status === 'in-progress' &&
+    targetDate != null &&
+    targetDate < new Date()
 
   return (
-    <div className="flex items-center gap-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+    <div className={`flex items-center gap-4 rounded-lg border bg-white p-4 shadow-sm ${
+      isOverdue ? 'border-red-300' : 'border-gray-200'
+    }`}>
       {/* Card thumbnail */}
       {territory.card?.downloadUrl ? (
         <div className="h-16 w-20 flex-shrink-0 overflow-hidden rounded-md bg-gray-100">
@@ -161,6 +169,11 @@ function TerritoryRow({ territory }: { territory: Territory }) {
           >
             {territory.status}
           </span>
+          {isOverdue && (
+            <span className="inline-block rounded-full bg-red-100 text-red-700 px-2 py-0.5 text-xs font-medium">
+              Overdue
+            </span>
+          )}
         </div>
         <p className="text-sm text-gray-600 truncate">{territory.name}</p>
         {territory.currentAssignment && (
@@ -173,7 +186,12 @@ function TerritoryRow({ territory }: { territory: Territory }) {
       {/* Meta */}
       <div className="flex-shrink-0 text-right">
         <p className="text-xs text-gray-400">{dateStr}</p>
-        <p className="text-xs text-gray-400 mt-1">
+        {targetStr && (
+          <p className={`text-xs mt-0.5 ${isOverdue ? 'text-red-500 font-medium' : 'text-gray-400'}`}>
+            Due: {targetStr}
+          </p>
+        )}
+        <p className="text-xs text-gray-400 mt-0.5">
           by {territory.announcedBy?.name ?? '—'}
         </p>
       </div>

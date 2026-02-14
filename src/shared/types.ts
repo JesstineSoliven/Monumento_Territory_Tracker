@@ -6,6 +6,8 @@ export type UserRole = 'admin' | 'servant' | 'leader' | 'publisher'
 
 // --- User ---
 
+export type MinistryDay = 'Tuesday' | 'Wednesday' | 'Thursday' | 'Friday'
+
 export interface AppUser {
   uid: string
   email: string
@@ -13,13 +15,14 @@ export interface AppUser {
   role: UserRole
   congregation: string
   isActive: boolean
+  assignedDays: MinistryDay[]
   createdAt: Timestamp
   updatedAt: Timestamp
 }
 
 // --- Territory ---
 
-export type TerritoryStatus = 'open' | 'in-progress' | 'completed'
+export type TerritoryStatus = 'announced' | 'in-progress' | 'completed' | 'rejected'
 
 export interface TerritoryAssignment {
   leaderId: string
@@ -46,6 +49,11 @@ export interface Territory {
     name: string
   }
   announcedAt: Timestamp
+  targetCompletionDate: Timestamp | null
+  assignedLeaderId: string | null
+  notificationRead: boolean
+  acceptedAt: Timestamp | null
+  rejectedAt: Timestamp | null
   lastCompletedAt: Timestamp | null
   completionCount: number
   createdAt: Timestamp
@@ -86,7 +94,6 @@ export interface TerritoryCard {
     uid: string
     name: string
   }
-  isActive: boolean
   isLinked: boolean
   linkedTerritoryId: string | null
   createdAt: Timestamp

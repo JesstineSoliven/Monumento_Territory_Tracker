@@ -1,13 +1,15 @@
 import { useState, useEffect } from 'react'
-import type { AppUser, UserRole } from '../../shared/types'
+import type { AppUser, UserRole, MinistryDay } from '../../shared/types'
 import { useAuth } from '../../shared/hooks/useAuth'
 import {
   subscribeToUsers,
   updateUserRole,
   toggleUserActive,
+  updateAssignedDays,
 } from './users.service'
 
 const ALL_ROLES: UserRole[] = ['admin', 'servant', 'leader', 'publisher']
+const ALL_MINISTRY_DAYS: MinistryDay[] = ['Tuesday', 'Wednesday', 'Thursday', 'Friday']
 
 const ROLE_COLORS: Record<UserRole, string> = {
   admin: 'bg-red-100 text-red-700',
@@ -59,15 +61,31 @@ export default function UsersPage() {
     }
   }
 
+  async function handleDayToggle(uid: string, day: MinistryDay, currentDays: MinistryDay[]) {
+    setUpdatingId(uid)
+    setError(null)
+    try {
+      const updatedDays = currentDays.includes(day)
+        ? currentDays.filter((d) => d !== day)
+        : [...currentDays, day]
+      await updateAssignedDays(uid, updatedDays)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to update assigned days.')
+    } finally {
+      setUpdatingId(null)
+    }
+  }
+
   const activeUsers = users.filter((u) => u.isActive)
   const deactivatedUsers = users.filter((u) => !u.isActive)
+  const leaders = users.filter((u) => u.role === 'leader' && u.isActive)
 
   return (
     <div className="p-6 max-w-5xl mx-auto">
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-gray-900">Manage Users</h1>
         <p className="mt-1 text-gray-600">
-          View all registered users. Change roles and activate or deactivate accounts.
+          View all registered users. Change roles, activate/deactivate accounts, and manage leader schedules.
         </p>
       </div>
 
@@ -123,6 +141,47 @@ export default function UsersPage() {
                     isUpdating={updatingId === user.uid}
                     onRoleChange={handleRoleChange}
                     onToggleActive={handleToggleActive}
+                  />
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      )}
+
+      {/* Leader Assigned Ministry Days */}
+      {!isLoading && leaders.length > 0 && (
+        <section className="mb-8">
+          <h2 className="text-lg font-semibold text-gray-900 mb-2">
+            Leader Assigned Ministry Days
+          </h2>
+          <p className="text-sm text-gray-500 mb-4">
+            Assign ministry days for each leader. Leaders will see their assigned days on their dashboard.
+          </p>
+          <div className="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Leader
+                  </th>
+                  {ALL_MINISTRY_DAYS.map((day) => (
+                    <th
+                      key={day}
+                      className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
+                      {day}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200">
+                {leaders.map((leader) => (
+                  <LeaderDayRow
+                    key={leader.uid}
+                    leader={leader}
+                    isUpdating={updatingId === leader.uid}
+                    onDayToggle={handleDayToggle}
                   />
                 ))}
               </tbody>
@@ -281,6 +340,73 @@ function UserRow({
           </button>
         )}
       </td>
+    </tr>
+  )
+}
+
+// ---------------------------------------------------------------------------
+// Leader day assignment row component
+// ---------------------------------------------------------------------------
+
+function LeaderDayRow({
+  leader,
+  isUpdating,
+  onDayToggle,
+}: {
+  leader: AppUser
+  isUpdating: boolean
+  onDayToggle: (uid: string, day: MinistryDay, currentDays: MinistryDay[]) => void
+}) {
+  const assignedDays = leader.assignedDays ?? []
+
+  return (
+    <tr>
+      {/* Leader info */}
+      <td className="px-4 py-3 whitespace-nowrap">
+        <div className="flex items-center gap-3">
+          <div className="h-8 w-8 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-semibold flex-shrink-0">
+            {leader.displayName.charAt(0).toUpperCase()}
+          </div>
+          <div>
+            <p className="text-sm font-medium text-gray-900">
+              {leader.displayName}
+            </p>
+            <p className="text-xs text-gray-400">{leader.congregation}</p>
+          </div>
+        </div>
+      </td>
+
+      {/* Day checkboxes */}
+      {ALL_MINISTRY_DAYS.map((day) => {
+        const isChecked = assignedDays.includes(day)
+        return (
+          <td key={day} className="px-4 py-3 text-center">
+            <button
+              type="button"
+              disabled={isUpdating}
+              onClick={() => onDayToggle(leader.uid, day, assignedDays)}
+              className={`inline-flex items-center justify-center h-8 w-8 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
+                isChecked
+                  ? 'bg-blue-600 text-white hover:bg-blue-700'
+                  : 'bg-gray-100 text-gray-400 hover:bg-gray-200'
+              }`}
+              title={`${isChecked ? 'Remove' : 'Assign'} ${day}`}
+            >
+              {isUpdating ? (
+                <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+              ) : isChecked ? (
+                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                </svg>
+              ) : (
+                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              )}
+            </button>
+          </td>
+        )
+      })}
     </tr>
   )
 }

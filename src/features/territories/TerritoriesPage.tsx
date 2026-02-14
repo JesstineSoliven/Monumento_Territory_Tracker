@@ -37,7 +37,7 @@ export default function TerritoriesPage() {
     return () => unsubscribe()
   }, [appUser, isLeader])
 
-  const inProgress = territories.filter((t) => t.status === 'in-progress')
+  const inProgress = territories.filter((t) => t.status === 'in-progress' || t.status === 'announced')
   const completed = territories.filter((t) => t.status === 'completed')
 
   return (
@@ -134,9 +134,10 @@ function TerritoryCard({
   isLeader: boolean
 }) {
   const statusColors: Record<string, string> = {
-    'open': 'bg-yellow-100 text-yellow-800',
+    'announced': 'bg-orange-100 text-orange-800',
     'in-progress': 'bg-blue-100 text-blue-800',
     'completed': 'bg-green-100 text-green-800',
+    'rejected': 'bg-red-100 text-red-800',
   }
 
   const announcedDate = territory.announcedAt?.toDate?.()

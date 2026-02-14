@@ -92,9 +92,10 @@ export default function TerritoryDetail() {
   }
 
   const statusColors: Record<string, string> = {
-    'open': 'bg-yellow-100 text-yellow-800',
+    'announced': 'bg-orange-100 text-orange-800',
     'in-progress': 'bg-blue-100 text-blue-800',
     'completed': 'bg-green-100 text-green-800',
+    'rejected': 'bg-red-100 text-red-800',
   }
 
   const announcedDate = territory.announcedAt?.toDate?.()
@@ -173,6 +174,27 @@ export default function TerritoryDetail() {
                   {announcedStr} by {territory.announcedBy?.name ?? '—'}
                 </dd>
               </div>
+              {territory.targetCompletionDate?.toDate && (
+                <div>
+                  <dt className="text-gray-500">Target Completion</dt>
+                  <dd className={`mt-0.5 ${
+                    territory.status === 'in-progress' &&
+                    territory.targetCompletionDate.toDate() < new Date()
+                      ? 'text-red-600 font-medium'
+                      : 'text-gray-900'
+                  }`}>
+                    {territory.targetCompletionDate.toDate().toLocaleDateString('en-US', {
+                      month: 'long',
+                      day: 'numeric',
+                      year: 'numeric',
+                    })}
+                    {territory.status === 'in-progress' &&
+                      territory.targetCompletionDate.toDate() < new Date() && (
+                        <span className="ml-2 text-xs text-red-500">(Overdue)</span>
+                      )}
+                  </dd>
+                </div>
+              )}
               {territory.currentAssignment && (
                 <div>
                   <dt className="text-gray-500">Assigned Leader</dt>

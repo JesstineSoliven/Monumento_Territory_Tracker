@@ -7,6 +7,26 @@ import {
   subscribeToLeaders,
 } from './territories.service'
 
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
+/** Returns today's date as YYYY-MM-DD string (local timezone) */
+function getTodayString(): string {
+  const now = new Date()
+  return now.toISOString().split('T')[0]
+}
+
+/** Parses a YYYY-MM-DD string into a Date at midnight local time */
+function parseLocalDate(dateStr: string): Date {
+  const [year, month, day] = dateStr.split('-').map(Number)
+  return new Date(year, month - 1, day)
+}
+
+// ---------------------------------------------------------------------------
+// Component
+// ---------------------------------------------------------------------------
+
 export default function AnnounceForm({ onSuccess }: { onSuccess: () => void }) {
   const { appUser } = useAuth()
 
@@ -14,6 +34,7 @@ export default function AnnounceForm({ onSuccess }: { onSuccess: () => void }) {
   const [selectedCard, setSelectedCard] = useState<TerritoryCard | null>(null)
   const [selectedLeaderId, setSelectedLeaderId] = useState('')
   const [description, setDescription] = useState('')
+  const [targetCompletionDate, setTargetCompletionDate] = useState('')
 
   // Leaders data
   const [leaders, setLeaders] = useState<AppUser[]>([])
@@ -31,9 +52,33 @@ export default function AnnounceForm({ onSuccess }: { onSuccess: () => void }) {
     return () => unsubscribe()
   }, [])
 
+  // ---------------------------------------------------------------------------
+  // Validation
+  // ---------------------------------------------------------------------------
+
+  const today = getTodayString()
+
+  const dateValidationError = (() => {
+    if (!targetCompletionDate) return null
+    const target = parseLocalDate(targetCompletionDate)
+    const todayDate = parseLocalDate(today)
+    if (target < todayDate) return 'Target completion date cannot be in the past.'
+    return null
+  })()
+
+  const isFormValid =
+    selectedCard !== null &&
+    selectedLeaderId !== '' &&
+    targetCompletionDate !== '' &&
+    dateValidationError === null
+
+  // ---------------------------------------------------------------------------
+  // Submit
+  // ---------------------------------------------------------------------------
+
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
-    if (!selectedCard || !selectedLeaderId || !appUser) return
+    if (!selectedCard || !selectedLeaderId || !targetCompletionDate || !appUser) return
 
     const leader = leaders.find((l) => l.uid === selectedLeaderId)
     if (!leader) return
@@ -47,6 +92,7 @@ export default function AnnounceForm({ onSuccess }: { onSuccess: () => void }) {
         leaderId: leader.uid,
         leaderName: leader.displayName,
         description,
+        targetCompletionDate: parseLocalDate(targetCompletionDate),
         announcedBy: {
           uid: appUser.uid,
           name: appUser.displayName,
@@ -57,6 +103,7 @@ export default function AnnounceForm({ onSuccess }: { onSuccess: () => void }) {
       setSelectedCard(null)
       setSelectedLeaderId('')
       setDescription('')
+      setTargetCompletionDate('')
       onSuccess()
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to announce territory.')
@@ -64,8 +111,6 @@ export default function AnnounceForm({ onSuccess }: { onSuccess: () => void }) {
       setIsSubmitting(false)
     }
   }
-
-  const isFormValid = selectedCard !== null && selectedLeaderId !== ''
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
@@ -131,10 +176,35 @@ export default function AnnounceForm({ onSuccess }: { onSuccess: () => void }) {
         )}
       </div>
 
-      {/* Step 3: Description (optional) */}
+      {/* Step 3: Target completion date */}
+      <div>
+        <label htmlFor="targetCompletionDate" className="block text-sm font-medium text-gray-700 mb-1">
+          3. Target Completion Date
+        </label>
+        <input
+          type="date"
+          id="targetCompletionDate"
+          value={targetCompletionDate}
+          min={today}
+          onChange={(e) => setTargetCompletionDate(e.target.value)}
+          className={`w-full rounded-md border px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-1 ${
+            dateValidationError
+              ? 'border-red-300 focus:border-red-500 focus:ring-red-500'
+              : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'
+          }`}
+        />
+        {dateValidationError && (
+          <p className="mt-1 text-xs text-red-600">{dateValidationError}</p>
+        )}
+        <p className="mt-1 text-xs text-gray-400">
+          The date by which the territory should be completed.
+        </p>
+      </div>
+
+      {/* Step 4: Description (optional) */}
       <div>
         <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
-          3. Description <span className="text-gray-400 font-normal">(optional)</span>
+          4. Description <span className="text-gray-400 font-normal">(optional)</span>
         </label>
         <textarea
           id="description"

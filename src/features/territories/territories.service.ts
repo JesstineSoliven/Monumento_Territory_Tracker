@@ -10,6 +10,7 @@ import {
   serverTimestamp,
   writeBatch,
   increment,
+  Timestamp,
 } from 'firebase/firestore'
 import type { Unsubscribe } from 'firebase/firestore'
 import { db } from '../../lib/firebase'
@@ -24,11 +25,22 @@ export interface AnnouncePayload {
   leaderId: string
   leaderName: string
   description: string
+  targetCompletionDate: Date
   announcedBy: { uid: string; name: string }
 }
 
 export async function announceTerritory(payload: AnnouncePayload): Promise<string> {
-  const { card, leaderId, leaderName, description, announcedBy } = payload
+  const { card, leaderId, leaderName, description, targetCompletionDate, announcedBy } = payload
+
+  // Validate: target completion date cannot be in the past
+  const now = new Date()
+  now.setHours(0, 0, 0, 0)
+  const target = new Date(targetCompletionDate)
+  target.setHours(0, 0, 0, 0)
+
+  if (target < now) {
+    throw new Error('Target completion date cannot be in the past.')
+  }
 
   const territoryRef = doc(collection(db, 'territories'))
   const cardRef = doc(db, 'territoryCards', card.id)
@@ -40,7 +52,7 @@ export async function announceTerritory(payload: AnnouncePayload): Promise<strin
     number: card.territoryNumber,
     name: card.label,
     description,
-    status: 'in-progress',
+    status: 'announced',
     card: {
       cardId: card.id,
       downloadUrl: card.downloadUrl,
@@ -53,6 +65,11 @@ export async function announceTerritory(payload: AnnouncePayload): Promise<strin
     },
     announcedBy,
     announcedAt: serverTimestamp(),
+    targetCompletionDate: Timestamp.fromDate(targetCompletionDate),
+    assignedLeaderId: leaderId,
+    notificationRead: false,
+    acceptedAt: null,
+    rejectedAt: null,
     lastCompletedAt: null,
     completionCount: 0,
     createdAt: serverTimestamp(),
@@ -142,7 +159,7 @@ export function subscribeToAvailableCards(
   onError?: (error: Error) => void,
 ): Unsubscribe {
   // Single where clause to avoid requiring a composite index.
-  // Client-side filter handles isActive + sorts by territoryNumber.
+  // Client-side sort handles ordering by territoryNumber.
   const q = query(
     collection(db, 'territoryCards'),
     where('isLinked', '==', false),
@@ -153,7 +170,6 @@ export function subscribeToAvailableCards(
     (snapshot) => {
       const cards = snapshot.docs
         .map((d) => ({ ...d.data(), id: d.id }) as TerritoryCard)
-        .filter((c) => c.isActive)
         .sort((a, b) => a.territoryNumber.localeCompare(b.territoryNumber))
       callback(cards)
     },
@@ -326,6 +342,111 @@ export function subscribeToReports(
     },
     (error) => {
       console.error('subscribeToReports error:', error)
+      onError?.(error)
+    },
+  )
+}
+
+// ---------------------------------------------------------------------------
+// Accept a territory assignment (leader only)
+// ---------------------------------------------------------------------------
+
+export async function acceptTerritory(territoryId: string): Promise<void> {
+  await updateDoc(doc(db, 'territories', territoryId), {
+    status: 'in-progress',
+    notificationRead: true,
+    acceptedAt: serverTimestamp(),
+    updatedAt: serverTimestamp(),
+  })
+}
+
+// ---------------------------------------------------------------------------
+// Reject a territory assignment (leader only)
+// ---------------------------------------------------------------------------
+
+export async function rejectTerritory(territoryId: string): Promise<void> {
+  await updateDoc(doc(db, 'territories', territoryId), {
+    status: 'rejected',
+    notificationRead: true,
+    rejectedAt: serverTimestamp(),
+    updatedAt: serverTimestamp(),
+  })
+}
+
+// ---------------------------------------------------------------------------
+// Mark notification as read without changing status
+// ---------------------------------------------------------------------------
+
+export async function markNotificationRead(territoryId: string): Promise<void> {
+  await updateDoc(doc(db, 'territories', territoryId), {
+    notificationRead: true,
+    updatedAt: serverTimestamp(),
+  })
+}
+
+// ---------------------------------------------------------------------------
+// Subscribe to unread notifications for a leader
+// ---------------------------------------------------------------------------
+
+export function subscribeToLeaderNotifications(
+  leaderId: string,
+  callback: (territories: Territory[]) => void,
+  onError?: (error: Error) => void,
+): Unsubscribe {
+  // Single where on assignedLeaderId, client-side filter for unread + announced
+  const q = query(
+    collection(db, 'territories'),
+    where('assignedLeaderId', '==', leaderId),
+  )
+
+  return onSnapshot(
+    q,
+    (snapshot) => {
+      const territories = snapshot.docs
+        .map((d) => ({ ...d.data(), id: d.id }) as Territory)
+        .filter((t) => t.status === 'announced' && !t.notificationRead)
+        .sort((a, b) => {
+          const aTime = a.announcedAt?.toMillis?.() ?? 0
+          const bTime = b.announcedAt?.toMillis?.() ?? 0
+          return bTime - aTime
+        })
+      callback(territories)
+    },
+    (error) => {
+      console.error('subscribeToLeaderNotifications error:', error)
+      onError?.(error)
+    },
+  )
+}
+
+// ---------------------------------------------------------------------------
+// Subscribe to all territories assigned to a leader (all statuses)
+// ---------------------------------------------------------------------------
+
+export function subscribeToLeaderAssignments(
+  leaderId: string,
+  callback: (territories: Territory[]) => void,
+  onError?: (error: Error) => void,
+): Unsubscribe {
+  const q = query(
+    collection(db, 'territories'),
+    where('assignedLeaderId', '==', leaderId),
+  )
+
+  return onSnapshot(
+    q,
+    (snapshot) => {
+      const territories = snapshot.docs
+        .map((d) => ({ ...d.data(), id: d.id }) as Territory)
+        .sort((a, b) => {
+          const aTime = a.announcedAt?.toMillis?.() ?? 0
+          const bTime = b.announcedAt?.toMillis?.() ?? 0
+          return bTime - aTime
+        })
+      callback(territories)
+    },
+    (error) => {
+      console.error('subscribeToLeaderAssignments error:', error)
       onError?.(error)
     },
   )

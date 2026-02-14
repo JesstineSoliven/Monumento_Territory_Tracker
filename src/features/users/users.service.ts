@@ -9,7 +9,7 @@ import {
 } from 'firebase/firestore'
 import type { Unsubscribe } from 'firebase/firestore'
 import { db } from '../../lib/firebase'
-import type { AppUser, UserRole } from '../../shared/types'
+import type { AppUser, UserRole, MinistryDay } from '../../shared/types'
 
 // ---------------------------------------------------------------------------
 // Subscribe to all users (real-time)
@@ -63,6 +63,20 @@ export async function toggleUserActive(
 ): Promise<void> {
   await updateDoc(doc(db, 'users', uid), {
     isActive,
+    updatedAt: serverTimestamp(),
+  })
+}
+
+// ---------------------------------------------------------------------------
+// Update a leader's assigned ministry days (admin/servant only)
+// ---------------------------------------------------------------------------
+
+export async function updateAssignedDays(
+  uid: string,
+  days: MinistryDay[],
+): Promise<void> {
+  await updateDoc(doc(db, 'users', uid), {
+    assignedDays: days,
     updatedAt: serverTimestamp(),
   })
 }

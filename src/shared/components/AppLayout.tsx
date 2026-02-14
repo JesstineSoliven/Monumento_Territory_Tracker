@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { NavLink, Outlet } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
+import { useNotifications } from '../hooks/useNotifications'
 import type { UserRole } from '../types'
 
 // ---------------------------------------------------------------------------
@@ -84,6 +85,7 @@ const ROLE_COLORS: Record<UserRole, string> = {
 
 export default function AppLayout() {
   const { appUser, logout, isOperationLoading } = useAuth()
+  const { count: notificationCount } = useNotifications()
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
   if (!appUser) return null
@@ -120,25 +122,40 @@ export default function AppLayout() {
           {/* Navigation */}
           <nav className="flex-1 px-3 py-4 overflow-y-auto">
             <ul className="space-y-1">
-              {visibleNavItems.map((item) => (
-                <li key={item.to}>
-                  <NavLink
-                    to={item.to}
-                    end={item.to === '/'}
-                    onClick={() => setSidebarOpen(false)}
-                    className={({ isActive }) =>
-                      `flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition-colors ${
-                        isActive
-                          ? 'bg-blue-50 text-blue-700'
-                          : 'text-gray-700 hover:bg-gray-100'
-                      }`
-                    }
-                  >
-                    {item.icon}
-                    {item.label}
-                  </NavLink>
-                </li>
-              ))}
+              {visibleNavItems.map((item) => {
+                const showBadge = item.to === '/' && notificationCount > 0
+                return (
+                  <li key={item.to}>
+                    <NavLink
+                      to={item.to}
+                      end={item.to === '/'}
+                      onClick={() => setSidebarOpen(false)}
+                      className={({ isActive }) =>
+                        `flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition-colors ${
+                          isActive
+                            ? 'bg-blue-50 text-blue-700'
+                            : 'text-gray-700 hover:bg-gray-100'
+                        }`
+                      }
+                    >
+                      <span className="relative">
+                        {item.icon}
+                        {showBadge && (
+                          <span className="absolute -top-1.5 -right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white ring-2 ring-white">
+                            {notificationCount > 9 ? '9+' : notificationCount}
+                          </span>
+                        )}
+                      </span>
+                      {item.label}
+                      {showBadge && (
+                        <span className="ml-auto inline-flex items-center rounded-full bg-red-100 px-2 py-0.5 text-xs font-semibold text-red-700">
+                          {notificationCount} new
+                        </span>
+                      )}
+                    </NavLink>
+                  </li>
+                )
+              })}
             </ul>
           </nav>
 
@@ -195,8 +212,15 @@ export default function AppLayout() {
               </svg>
             </button>
             <h1 className="text-sm font-bold text-gray-900">Monumento</h1>
-            <div className="h-8 w-8 rounded-full bg-blue-600 flex items-center justify-center text-white font-semibold text-xs">
-              {appUser.displayName.charAt(0).toUpperCase()}
+            <div className="relative">
+              <div className="h-8 w-8 rounded-full bg-blue-600 flex items-center justify-center text-white font-semibold text-xs">
+                {appUser.displayName.charAt(0).toUpperCase()}
+              </div>
+              {notificationCount > 0 && (
+                <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white ring-2 ring-white">
+                  {notificationCount > 9 ? '9+' : notificationCount}
+                </span>
+              )}
             </div>
           </div>
         </header>

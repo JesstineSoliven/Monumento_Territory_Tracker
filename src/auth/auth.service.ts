@@ -77,6 +77,7 @@ export async function createUserDocument(
     role,
     congregation,
     isActive: true,
+    assignedDays: [],
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
   })

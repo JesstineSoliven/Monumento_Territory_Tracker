@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useAuth } from '../../shared/hooks/useAuth'
 import {
   subscribeToTerritoryCards,
-  toggleCardActive,
+  deleteTerritoryCard,
 } from './territory-cards.service'
 import CardUploader from './CardUploader'
 import CardThumbnail from './CardThumbnail'
@@ -14,7 +14,7 @@ export default function TerritoryCardsPage() {
   const [cards, setCards] = useState<TerritoryCard[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [togglingCardId, setTogglingCardId] = useState<string | null>(null)
+  const [deletingCardId, setDeletingCardId] = useState<string | null>(null)
 
   // -------------------------------------------------------------------
   // Real-time subscription to territory cards
@@ -29,22 +29,29 @@ export default function TerritoryCardsPage() {
   }, [])
 
   // -------------------------------------------------------------------
-  // Toggle active/disabled
+  // Delete a territory card (with linked-card safety check)
   // -------------------------------------------------------------------
 
-  async function handleToggleActive(cardId: string, newValue: boolean) {
-    setTogglingCardId(cardId)
+  async function handleDelete(card: TerritoryCard) {
+    setDeletingCardId(card.id)
     setError(null)
     try {
-      await toggleCardActive(cardId, newValue)
+      await deleteTerritoryCard(card)
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : 'Failed to update card status.',
+        err instanceof Error ? err.message : 'Failed to delete card.',
       )
     } finally {
-      setTogglingCardId(null)
+      setDeletingCardId(null)
     }
   }
+
+  // -------------------------------------------------------------------
+  // Separate linked and available cards for display
+  // -------------------------------------------------------------------
+
+  const linkedCards = cards.filter((c) => c.isLinked)
+  const availableCards = cards.filter((c) => !c.isLinked)
 
   // -------------------------------------------------------------------
   // Render
@@ -88,7 +95,7 @@ export default function TerritoryCardsPage() {
       {/* Card gallery */}
       <div>
         <h2 className="text-lg font-semibold text-gray-900 mb-4">
-          Uploaded Cards ({cards.length})
+          All Cards ({cards.length})
         </h2>
 
         {/* Loading state */}
@@ -106,17 +113,41 @@ export default function TerritoryCardsPage() {
           </div>
         )}
 
-        {/* Card grid */}
-        {!isLoading && cards.length > 0 && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {cards.map((card) => (
-              <CardThumbnail
-                key={card.id}
-                card={card}
-                onToggleActive={handleToggleActive}
-                isToggling={togglingCardId === card.id}
-              />
-            ))}
+        {/* Available cards */}
+        {!isLoading && availableCards.length > 0 && (
+          <div className="mb-8">
+            <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-3">
+              Available ({availableCards.length})
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {availableCards.map((card) => (
+                <CardThumbnail
+                  key={card.id}
+                  card={card}
+                  onDelete={handleDelete}
+                  isDeleting={deletingCardId === card.id}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Linked cards */}
+        {!isLoading && linkedCards.length > 0 && (
+          <div>
+            <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-3">
+              Linked to Territories ({linkedCards.length})
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {linkedCards.map((card) => (
+                <CardThumbnail
+                  key={card.id}
+                  card={card}
+                  onDelete={handleDelete}
+                  isDeleting={deletingCardId === card.id}
+                />
+              ))}
+            </div>
           </div>
         )}
       </div>

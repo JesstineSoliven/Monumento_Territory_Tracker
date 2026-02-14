@@ -2,13 +2,17 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import type { Territory } from '../../shared/types'
 import { useAuth } from '../../shared/hooks/useAuth'
+import { useNotifications } from '../../shared/hooks/useNotifications'
 import {
   subscribeToTerritories,
   subscribeToMyTerritories,
+  acceptTerritory,
+  rejectTerritory,
 } from '../territories/territories.service'
 
 export default function DashboardPage() {
   const { appUser } = useAuth()
+  const { unread } = useNotifications()
 
   const [territories, setTerritories] = useState<Territory[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -54,6 +58,41 @@ export default function DashboardPage() {
           {greetings[appUser?.role ?? 'publisher']}
         </p>
       </div>
+
+      {/* Leader: assigned ministry days */}
+      {isLeader && appUser?.assignedDays && appUser.assignedDays.length > 0 && (
+        <div className="mb-6 rounded-lg border border-blue-200 bg-blue-50 p-4">
+          <h2 className="text-sm font-semibold text-blue-800 mb-2">Your Ministry Days</h2>
+          <div className="flex flex-wrap gap-2">
+            {appUser.assignedDays.map((day) => (
+              <span
+                key={day}
+                className="inline-flex items-center rounded-full bg-blue-600 px-3 py-1 text-xs font-medium text-white"
+              >
+                {day}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Leader: pending assignment notifications */}
+      {isLeader && unread.length > 0 && (
+        <div className="mb-6">
+          <h2 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
+            <svg className="h-5 w-5 text-red-500" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M5.85 3.5a.75.75 0 00-1.117-1 9.719 9.719 0 00-2.348 4.876.75.75 0 001.479.248A8.219 8.219 0 015.85 3.5zM19.267 2.5a.75.75 0 10-1.118 1 8.22 8.22 0 011.987 4.124.75.75 0 001.48-.248A9.72 9.72 0 0019.266 2.5z" />
+              <path fillRule="evenodd" d="M12 2.25A6.75 6.75 0 005.25 9v.75a8.217 8.217 0 01-2.119 5.52.75.75 0 00.298 1.206c1.544.57 3.16.99 4.831 1.243a3.75 3.75 0 107.48 0 24.583 24.583 0 004.83-1.244.75.75 0 00.298-1.205 8.217 8.217 0 01-2.118-5.52V9A6.75 6.75 0 0012 2.25zM9.75 18c0-.034 0-.067.002-.1a25.05 25.05 0 004.496 0l.002.1a2.25 2.25 0 01-4.5 0z" clipRule="evenodd" />
+            </svg>
+            New Assignments ({unread.length})
+          </h2>
+          <div className="space-y-3">
+            {unread.map((t) => (
+              <NotificationCard key={t.id} territory={t} />
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Stats cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
@@ -249,5 +288,173 @@ function QuickAction({
         <p className="mt-0.5 text-xs text-gray-500">{description}</p>
       </div>
     </Link>
+  )
+}
+
+// ---------------------------------------------------------------------------
+// Notification card with accept/reject
+// ---------------------------------------------------------------------------
+
+function NotificationCard({ territory }: { territory: Territory }) {
+  const [isAccepting, setIsAccepting] = useState(false)
+  const [isRejecting, setIsRejecting] = useState(false)
+  const [showRejectConfirm, setShowRejectConfirm] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  const announcedDate = territory.announcedAt?.toDate?.()
+  const dateStr = announcedDate
+    ? announcedDate.toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+      })
+    : '—'
+
+  const targetDate = territory.targetCompletionDate?.toDate?.()
+  const targetStr = targetDate
+    ? targetDate.toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+      })
+    : null
+
+  async function handleAccept() {
+    setIsAccepting(true)
+    setError(null)
+    try {
+      await acceptTerritory(territory.id)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to accept.')
+    } finally {
+      setIsAccepting(false)
+    }
+  }
+
+  async function handleReject() {
+    setIsRejecting(true)
+    setError(null)
+    setShowRejectConfirm(false)
+    try {
+      await rejectTerritory(territory.id)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to reject.')
+    } finally {
+      setIsRejecting(false)
+    }
+  }
+
+  const isBusy = isAccepting || isRejecting
+
+  return (
+    <div className="rounded-lg border border-orange-200 bg-orange-50 p-4 shadow-sm">
+      {error && (
+        <div className="mb-3 rounded-md bg-red-50 border border-red-200 p-2">
+          <p className="text-xs text-red-700">{error}</p>
+        </div>
+      )}
+
+      <div className="flex items-start gap-4">
+        {/* Card thumbnail */}
+        {territory.card?.downloadUrl ? (
+          <div className="h-16 w-20 flex-shrink-0 overflow-hidden rounded-md bg-gray-100">
+            <img
+              src={territory.card.downloadUrl}
+              alt={territory.number}
+              loading="lazy"
+              className="h-full w-full object-cover"
+            />
+          </div>
+        ) : (
+          <div className="h-16 w-20 flex-shrink-0 rounded-md bg-gray-100 flex items-center justify-center">
+            <span className="text-xs text-gray-400">--</span>
+          </div>
+        )}
+
+        {/* Info */}
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2">
+            <p className="text-sm font-bold text-gray-900">{territory.number}</p>
+            <span className="inline-block rounded-full bg-orange-200 px-2 py-0.5 text-xs font-medium text-orange-800">
+              New Assignment
+            </span>
+          </div>
+          <p className="text-sm text-gray-700 truncate">{territory.name}</p>
+          <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1">
+            <p className="text-xs text-gray-500">Announced: {dateStr}</p>
+            {targetStr && (
+              <p className="text-xs text-gray-500">Due: {targetStr}</p>
+            )}
+          </div>
+          {territory.announcedBy && (
+            <p className="text-xs text-gray-400 mt-0.5">
+              by {territory.announcedBy.name}
+            </p>
+          )}
+        </div>
+      </div>
+
+      {/* Action buttons */}
+      {!showRejectConfirm ? (
+        <div className="flex gap-3 mt-4">
+          <button
+            type="button"
+            disabled={isBusy}
+            onClick={handleAccept}
+            className="flex-1 flex items-center justify-center gap-2 rounded-md bg-green-600 px-4 py-2 text-sm font-semibold text-white hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            {isAccepting ? (
+              <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+            ) : (
+              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+              </svg>
+            )}
+            Accept
+          </button>
+          <button
+            type="button"
+            disabled={isBusy}
+            onClick={() => setShowRejectConfirm(true)}
+            className="flex-1 flex items-center justify-center gap-2 rounded-md border border-red-300 bg-white px-4 py-2 text-sm font-semibold text-red-700 hover:bg-red-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+            Reject
+          </button>
+        </div>
+      ) : (
+        <div className="mt-4 rounded-md border border-red-200 bg-red-50 p-3">
+          <p className="text-sm text-red-800 font-medium mb-2">
+            Reject this assignment?
+          </p>
+          <p className="text-xs text-red-600 mb-3">
+            The servant will need to reassign this territory to another leader.
+          </p>
+          <div className="flex gap-2">
+            <button
+              type="button"
+              disabled={isBusy}
+              onClick={() => setShowRejectConfirm(false)}
+              className="flex-1 rounded-md border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              disabled={isBusy}
+              onClick={handleReject}
+              className="flex-1 flex items-center justify-center gap-1.5 rounded-md bg-red-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-red-700 disabled:opacity-50 transition-colors"
+            >
+              {isRejecting && (
+                <span className="inline-block h-3 w-3 animate-spin rounded-full border-2 border-white border-t-transparent" />
+              )}
+              Confirm Reject
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
   )
 }

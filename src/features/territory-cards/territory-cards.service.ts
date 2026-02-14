@@ -2,12 +2,13 @@ import {
   ref,
   uploadBytesResumable,
   getDownloadURL,
+  deleteObject,
 } from 'firebase/storage'
 import {
   collection,
   doc,
   setDoc,
-  updateDoc,
+  deleteDoc,
   onSnapshot,
   query,
   orderBy,
@@ -104,7 +105,6 @@ export function uploadTerritoryCard(
             fileSize: file.size,
             contentType: file.type,
             uploadedBy: uploader,
-            isActive: true,
             isLinked: false,
             linkedTerritoryId: null,
             createdAt: serverTimestamp(),
@@ -202,15 +202,35 @@ export function subscribeToTerritoryCards(
 }
 
 // ---------------------------------------------------------------------------
-// Toggle active/disabled
+// Delete a territory card (Firestore doc + Storage file)
 // ---------------------------------------------------------------------------
 
-export async function toggleCardActive(
-  cardId: string,
-  isActive: boolean,
-): Promise<void> {
-  await updateDoc(doc(db, 'territoryCards', cardId), {
-    isActive,
-    updatedAt: serverTimestamp(),
-  })
+export async function deleteTerritoryCard(card: TerritoryCard): Promise<void> {
+  // Safety check: prevent deletion if the card is currently linked to a territory
+  if (card.isLinked) {
+    throw new Error(
+      'Cannot delete a card that is currently linked to an active territory. Unlink the card first.',
+    )
+  }
+
+  // 1. Delete the file from Firebase Storage
+  try {
+    const storageRef = ref(storage, card.storagePath)
+    await deleteObject(storageRef)
+  } catch (err: unknown) {
+    // If the file is already gone (404), continue to delete the Firestore doc.
+    // Any other error should be thrown.
+    if (
+      err instanceof Error &&
+      'code' in err &&
+      (err as { code: string }).code === 'storage/object-not-found'
+    ) {
+      console.warn('Storage file already deleted:', card.storagePath)
+    } else {
+      throw err
+    }
+  }
+
+  // 2. Delete the Firestore metadata document
+  await deleteDoc(doc(db, 'territoryCards', card.id))
 }
