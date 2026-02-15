@@ -1,0 +1,8 @@
+{
+  "projects": {
+    "default": "monumento-territory-tracker",
+    "territory_project": "monumento-territory-tracker"
+  },
+  "targets": {},
+  "etags": {}
+}

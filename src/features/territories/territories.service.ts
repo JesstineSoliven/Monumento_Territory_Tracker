@@ -14,7 +14,8 @@ import {
 } from 'firebase/firestore'
 import type { Unsubscribe } from 'firebase/firestore'
 import { db } from '../../lib/firebase'
-import type { Territory, TerritoryCard, AppUser, Report } from '../../shared/types'
+import { getDoc } from 'firebase/firestore'
+import type { Territory, TerritoryCard, AppUser, Report, ReportStatus } from '../../shared/types'
 
 // ---------------------------------------------------------------------------
 // Announce a territory — creates a territory doc and links the card
@@ -57,6 +58,7 @@ export async function announceTerritory(payload: AnnouncePayload): Promise<strin
       cardId: card.id,
       downloadUrl: card.downloadUrl,
       territoryNumber: card.territoryNumber,
+      nearestMeetingPlace: card.nearestMeetingPlace || '',
     },
     currentAssignment: {
       leaderId,
@@ -72,6 +74,11 @@ export async function announceTerritory(payload: AnnouncePayload): Promise<strin
     rejectedAt: null,
     lastCompletedAt: null,
     completionCount: 0,
+    emailNotificationSent: false,
+    reportSubmitted: false,
+    reportSubmittedAt: null,
+    actualCompletionDate: null,
+    reportStatus: 'missing',
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
   })
@@ -289,33 +296,194 @@ export interface ReportPayload {
   reportedBy: { uid: string; name: string }
   completed: boolean
   remarks: string
+  actualCompletionDate: Date
 }
 
 export async function submitReport(payload: ReportPayload): Promise<string> {
-  const { territoryId, reportedBy, completed, remarks } = payload
+  const { territoryId, reportedBy, completed, remarks, actualCompletionDate } = payload
+
+  // Guard: prevent duplicate final report submission
+  const territorySnap = await getDoc(doc(db, 'territories', territoryId))
+  if (!territorySnap.exists()) {
+    throw new Error('Territory not found.')
+  }
+  const territoryData = territorySnap.data()
+  if (territoryData.reportSubmitted === true) {
+    throw new Error('A final report has already been submitted for this territory.')
+  }
 
   const reportRef = doc(collection(db, 'territories', territoryId, 'reports'))
+  const actualTs = Timestamp.fromDate(actualCompletionDate)
 
   await setDoc(reportRef, {
     territoryId,
     reportedBy,
     completed,
     remarks,
+    actualCompletionDate: actualTs,
     reportedAt: serverTimestamp(),
     createdAt: serverTimestamp(),
   })
 
-  // If the leader marked it as completed, update the territory status
+  // If the leader marked it as completed, update the territory status + report tracking
   if (completed) {
+    // Derive reportStatus based on actualCompletionDate vs targetCompletionDate
+    let reportStatus: ReportStatus = 'on_time'
+    const targetTs = territoryData.targetCompletionDate
+    if (targetTs) {
+      const targetDate = targetTs.toDate()
+      // Normalize both dates to midnight for day-level comparison
+      const actualNorm = new Date(actualCompletionDate)
+      actualNorm.setHours(0, 0, 0, 0)
+      const targetNorm = new Date(targetDate)
+      targetNorm.setHours(0, 0, 0, 0)
+
+      if (actualNorm > targetNorm) {
+        reportStatus = 'late'
+      }
+    }
+
     await updateDoc(doc(db, 'territories', territoryId), {
       status: 'completed',
       lastCompletedAt: serverTimestamp(),
       completionCount: increment(1),
+      reportSubmitted: true,
+      reportSubmittedAt: serverTimestamp(),
+      actualCompletionDate: actualTs,
+      reportStatus,
       updatedAt: serverTimestamp(),
     })
   }
 
   return reportRef.id
+}
+
+// ---------------------------------------------------------------------------
+// Derive report status for display (client-side safe derivation)
+// ---------------------------------------------------------------------------
+
+export function deriveReportStatus(territory: Territory): ReportStatus {
+  // If a report was submitted, trust the stored status
+  if (territory.reportSubmitted) {
+    return territory.reportStatus ?? 'on_time'
+  }
+
+  // Not submitted — check if overdue
+  if (territory.targetCompletionDate?.toDate) {
+    const targetDate = territory.targetCompletionDate.toDate()
+    const now = new Date()
+    now.setHours(0, 0, 0, 0)
+    targetDate.setHours(0, 0, 0, 0)
+    if (now > targetDate) {
+      return 'missing'
+    }
+  }
+
+  return 'missing'
+}
+
+// ---------------------------------------------------------------------------
+// Monthly export — fetch all territories for a given month
+// ---------------------------------------------------------------------------
+
+export interface MonthlyExportRow {
+  territoryNumber: string
+  territoryName: string
+  leaderName: string
+  announcedAt: string
+  targetCompletionDate: string
+  actualCompletionDate: string
+  reportSubmittedAt: string
+  reportStatus: string
+}
+
+export interface MonthlyExportSummary {
+  total: number
+  onTime: number
+  late: number
+  missing: number
+}
+
+export function buildMonthlyExport(territories: Territory[]): {
+  rows: MonthlyExportRow[]
+  summary: MonthlyExportSummary
+} {
+  const dateOpts: Intl.DateTimeFormatOptions = {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  }
+
+  const formatDate = (ts: { toDate: () => Date } | null | undefined): string => {
+    if (!ts?.toDate) return '—'
+    return ts.toDate().toLocaleDateString('en-US', dateOpts)
+  }
+
+  const rows: MonthlyExportRow[] = territories.map((t) => {
+    const status = deriveReportStatus(t)
+    return {
+      territoryNumber: t.number,
+      territoryName: t.name,
+      leaderName: t.currentAssignment?.leaderName ?? '—',
+      announcedAt: formatDate(t.announcedAt),
+      targetCompletionDate: formatDate(t.targetCompletionDate),
+      actualCompletionDate: formatDate(t.actualCompletionDate),
+      reportSubmittedAt: formatDate(t.reportSubmittedAt),
+      reportStatus: status === 'on_time' ? 'On Time' : status === 'late' ? 'Late' : 'Missing',
+    }
+  })
+
+  const summary: MonthlyExportSummary = {
+    total: rows.length,
+    onTime: territories.filter((t) => deriveReportStatus(t) === 'on_time').length,
+    late: territories.filter((t) => deriveReportStatus(t) === 'late').length,
+    missing: territories.filter((t) => deriveReportStatus(t) === 'missing').length,
+  }
+
+  return { rows, summary }
+}
+
+export function exportToCSV(rows: MonthlyExportRow[], summary: MonthlyExportSummary, monthLabel: string): void {
+  const headers = [
+    'Territory Number',
+    'Territory Name',
+    'Leader',
+    'Announced',
+    'Target Completion',
+    'Actual Completion',
+    'Report Submitted',
+    'Status',
+  ]
+
+  const csvRows = [
+    headers.join(','),
+    ...rows.map((r) =>
+      [
+        `"${r.territoryNumber}"`,
+        `"${r.territoryName}"`,
+        `"${r.leaderName}"`,
+        `"${r.announcedAt}"`,
+        `"${r.targetCompletionDate}"`,
+        `"${r.actualCompletionDate}"`,
+        `"${r.reportSubmittedAt}"`,
+        `"${r.reportStatus}"`,
+      ].join(','),
+    ),
+    '',
+    `"Summary for ${monthLabel}"`,
+    `"Total Assignments",${summary.total}`,
+    `"On Time",${summary.onTime}`,
+    `"Late",${summary.late}`,
+    `"Missing",${summary.missing}`,
+  ]
+
+  const blob = new Blob([csvRows.join('\n')], { type: 'text/csv;charset=utf-8;' })
+  const url = URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.href = url
+  link.download = `territory-report-${monthLabel}.csv`
+  link.click()
+  URL.revokeObjectURL(url)
 }
 
 // ---------------------------------------------------------------------------

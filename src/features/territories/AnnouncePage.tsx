@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
-import type { Territory } from '../../shared/types'
-import { subscribeToTerritories } from './territories.service'
+import type { Territory, ReportStatus } from '../../shared/types'
+import { subscribeToTerritories, deriveReportStatus } from './territories.service'
 import AnnounceForm from './AnnounceForm'
 
 export default function AnnouncePage() {
@@ -174,6 +174,7 @@ function TerritoryRow({ territory }: { territory: Territory }) {
               Overdue
             </span>
           )}
+          <ReportStatusBadge status={deriveReportStatus(territory)} />
         </div>
         <p className="text-sm text-gray-600 truncate">{territory.name}</p>
         {territory.currentAssignment && (
@@ -191,10 +192,39 @@ function TerritoryRow({ territory }: { territory: Territory }) {
             Due: {targetStr}
           </p>
         )}
+        {territory.actualCompletionDate?.toDate && (
+          <p className="text-xs text-gray-400 mt-0.5">
+            Done: {territory.actualCompletionDate.toDate().toLocaleDateString('en-US', dateOpts)}
+          </p>
+        )}
         <p className="text-xs text-gray-400 mt-0.5">
           by {territory.announcedBy?.name ?? '—'}
         </p>
       </div>
     </div>
+  )
+}
+
+// ---------------------------------------------------------------------------
+// Report status badge component
+// ---------------------------------------------------------------------------
+
+function ReportStatusBadge({ status }: { status: ReportStatus }) {
+  const styles: Record<ReportStatus, string> = {
+    on_time: 'bg-green-100 text-green-800',
+    late: 'bg-orange-100 text-orange-800',
+    missing: 'bg-red-100 text-red-800',
+  }
+
+  const labels: Record<ReportStatus, string> = {
+    on_time: 'On Time',
+    late: 'Late',
+    missing: 'Missing',
+  }
+
+  return (
+    <span className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium ${styles[status]}`}>
+      {labels[status]}
+    </span>
   )
 }

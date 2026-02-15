@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import type { TerritoryCard } from '../../shared/types'
-import { subscribeToAvailableCards } from '../territories/territories.service'
+import { subscribeToTerritoryCards } from './territory-cards.service'
 
 interface CardPickerProps {
   selectedCardId: string | null
@@ -11,9 +11,14 @@ export default function CardPicker({ selectedCardId, onSelect }: CardPickerProps
   const [cards, setCards] = useState<TerritoryCard[]>([])
   const [isLoading, setIsLoading] = useState(true)
 
+  // Subscribe to ALL cards — completed territories can be re-announced
   useEffect(() => {
-    const unsubscribe = subscribeToAvailableCards((updatedCards) => {
-      setCards(updatedCards)
+    const unsubscribe = subscribeToTerritoryCards((allCards) => {
+      // Sort by territory number for consistent display
+      const sorted = [...allCards].sort((a, b) =>
+        a.territoryNumber.localeCompare(b.territoryNumber),
+      )
+      setCards(sorted)
       setIsLoading(false)
     })
     return () => unsubscribe()
@@ -60,9 +65,14 @@ export default function CardPicker({ selectedCardId, onSelect }: CardPickerProps
               />
             </div>
             <div className="p-2">
-              <p className="text-xs font-bold text-gray-900 truncate">
-                {card.territoryNumber}
-              </p>
+              <div className="flex items-center gap-1">
+                <p className="text-xs font-bold text-gray-900 truncate">
+                  {card.territoryNumber}
+                </p>
+                {card.isLinked && (
+                  <span className="flex-shrink-0 inline-block w-2 h-2 rounded-full bg-blue-500" title="Currently linked to a territory" />
+                )}
+              </div>
               <p className="text-xs text-gray-500 truncate">{card.label}</p>
             </div>
             {isSelected && (

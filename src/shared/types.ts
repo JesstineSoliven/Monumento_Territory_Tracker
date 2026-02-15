@@ -24,6 +24,8 @@ export interface AppUser {
 
 export type TerritoryStatus = 'announced' | 'in-progress' | 'completed' | 'rejected'
 
+export type ReportStatus = 'on_time' | 'late' | 'missing'
+
 export interface TerritoryAssignment {
   leaderId: string
   leaderName: string
@@ -34,6 +36,7 @@ export interface TerritoryCardRef {
   cardId: string
   downloadUrl: string
   territoryNumber: string
+  nearestMeetingPlace: string
 }
 
 export interface Territory {
@@ -56,6 +59,11 @@ export interface Territory {
   rejectedAt: Timestamp | null
   lastCompletedAt: Timestamp | null
   completionCount: number
+  emailNotificationSent: boolean
+  reportSubmitted: boolean
+  reportSubmittedAt: Timestamp | null
+  actualCompletionDate: Timestamp | null
+  reportStatus: ReportStatus
   createdAt: Timestamp
   updatedAt: Timestamp
 }
@@ -71,6 +79,7 @@ export interface Report {
   }
   completed: boolean
   remarks: string
+  actualCompletionDate: Timestamp | null
   reportedAt: Timestamp
   createdAt: Timestamp
 }

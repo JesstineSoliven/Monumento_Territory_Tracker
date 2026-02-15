@@ -206,12 +206,9 @@ export function subscribeToTerritoryCards(
 // ---------------------------------------------------------------------------
 
 export async function deleteTerritoryCard(card: TerritoryCard): Promise<void> {
-  // Safety check: prevent deletion if the card is currently linked to a territory
-  if (card.isLinked) {
-    throw new Error(
-      'Cannot delete a card that is currently linked to an active territory. Unlink the card first.',
-    )
-  }
+  // Card deletion is always allowed for admin/servant.
+  // Historical territory announcements retain snapshot data (territoryNumber,
+  // name, meetingPlace) so they remain readable even after the card is gone.
 
   // 1. Delete the file from Firebase Storage
   try {

@@ -8,6 +8,7 @@ import UsersPage from '../features/users/UsersPage'
 import TerritoryCardsPage from '../features/territory-cards/TerritoryCardsPage'
 import AnnouncePage from '../features/territories/AnnouncePage'
 import TerritoryDetail from '../features/territories/TerritoryDetail'
+import MonthlyReportPage from '../features/territories/MonthlyReportPage'
 
 export const router = createBrowserRouter([
   // --- Public routes ---
@@ -44,6 +45,10 @@ export const router = createBrowserRouter([
           {
             path: '/announce',
             element: <AnnouncePage />,
+          },
+          {
+            path: '/reports',
+            element: <MonthlyReportPage />,
           },
         ],
       },

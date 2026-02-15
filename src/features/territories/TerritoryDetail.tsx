@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import type { Territory, Report } from '../../shared/types'
+import type { Territory, Report, ReportStatus } from '../../shared/types'
 import { useAuth } from '../../shared/hooks/useAuth'
-import { subscribeToTerritory, subscribeToReports } from './territories.service'
+import { subscribeToTerritory, subscribeToReports, deriveReportStatus } from './territories.service'
 import ReportForm from './ReportForm'
 
 export default function TerritoryDetail() {
@@ -55,6 +55,7 @@ export default function TerritoryDetail() {
     appUser &&
     territory &&
     territory.status === 'in-progress' &&
+    !territory.reportSubmitted &&
     ['admin', 'servant', 'leader'].includes(appUser.role)
 
   // Is the user the assigned leader?
@@ -210,6 +211,39 @@ export default function TerritoryDetail() {
                 <dt className="text-gray-500">Times Completed</dt>
                 <dd className="text-gray-900 mt-0.5">{territory.completionCount}</dd>
               </div>
+              {/* Report status */}
+              <div>
+                <dt className="text-gray-500">Report Status</dt>
+                <dd className="mt-0.5">
+                  <ReportStatusBadge status={deriveReportStatus(territory)} />
+                </dd>
+              </div>
+              {/* Actual completion date */}
+              {territory.actualCompletionDate?.toDate && (
+                <div>
+                  <dt className="text-gray-500">Actual Completion</dt>
+                  <dd className="text-gray-900 mt-0.5">
+                    {territory.actualCompletionDate.toDate().toLocaleDateString('en-US', {
+                      month: 'long',
+                      day: 'numeric',
+                      year: 'numeric',
+                    })}
+                  </dd>
+                </div>
+              )}
+              {/* Report submitted at */}
+              {territory.reportSubmittedAt?.toDate && (
+                <div>
+                  <dt className="text-gray-500">Report Submitted</dt>
+                  <dd className="text-gray-900 mt-0.5">
+                    {territory.reportSubmittedAt.toDate().toLocaleDateString('en-US', {
+                      month: 'long',
+                      day: 'numeric',
+                      year: 'numeric',
+                    })}
+                  </dd>
+                </div>
+              )}
             </dl>
           </div>
         </div>
@@ -235,7 +269,7 @@ export default function TerritoryDetail() {
               </div>
 
               {showReportForm && (
-                <ReportForm territoryId={territory.id} onSuccess={handleReportSuccess} />
+                <ReportForm territoryId={territory.id} territory={territory} onSuccess={handleReportSuccess} />
               )}
 
               {!showReportForm && !isAssignedLeader && (
@@ -249,19 +283,31 @@ export default function TerritoryDetail() {
           {/* Territory completed notice */}
           {territory.status === 'completed' && (
             <div className="rounded-md bg-green-50 border border-green-200 p-4">
-              <p className="text-sm font-medium text-green-800">
-                This territory has been completed.
-              </p>
-              {territory.lastCompletedAt?.toDate && (
+              <div className="flex items-center gap-2">
+                <p className="text-sm font-medium text-green-800">
+                  This territory has been completed.
+                </p>
+                <ReportStatusBadge status={deriveReportStatus(territory)} />
+              </div>
+              {territory.actualCompletionDate?.toDate && (
                 <p className="text-xs text-green-600 mt-1">
                   Completed on{' '}
-                  {territory.lastCompletedAt.toDate().toLocaleDateString('en-US', {
+                  {territory.actualCompletionDate.toDate().toLocaleDateString('en-US', {
                     month: 'long',
                     day: 'numeric',
                     year: 'numeric',
                   })}
                 </p>
               )}
+            </div>
+          )}
+
+          {/* Report already submitted notice */}
+          {territory.reportSubmitted && territory.status === 'in-progress' && (
+            <div className="rounded-md bg-blue-50 border border-blue-200 p-4">
+              <p className="text-sm font-medium text-blue-800">
+                A final report has already been submitted for this territory.
+              </p>
             </div>
           )}
 
@@ -333,7 +379,38 @@ function ReportRow({ report }: { report: Report }) {
           <span className="text-xs text-gray-400">{dateStr}</span>
         </div>
       </div>
-      <p className="text-sm text-gray-900 whitespace-pre-wrap">{report.remarks}</p>
+      {report.actualCompletionDate?.toDate && (
+        <p className="text-xs text-gray-500 mt-1">
+          Completed: {report.actualCompletionDate.toDate().toLocaleDateString('en-US', {
+            month: 'short', day: 'numeric', year: 'numeric',
+          })}
+        </p>
+      )}
+      <p className="text-sm text-gray-900 whitespace-pre-wrap mt-1">{report.remarks}</p>
     </div>
+  )
+}
+
+// ---------------------------------------------------------------------------
+// Report status badge component
+// ---------------------------------------------------------------------------
+
+function ReportStatusBadge({ status }: { status: ReportStatus }) {
+  const styles: Record<ReportStatus, string> = {
+    on_time: 'bg-green-100 text-green-800',
+    late: 'bg-orange-100 text-orange-800',
+    missing: 'bg-red-100 text-red-800',
+  }
+
+  const labels: Record<ReportStatus, string> = {
+    on_time: 'On Time',
+    late: 'Late',
+    missing: 'Missing',
+  }
+
+  return (
+    <span className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-medium ${styles[status]}`}>
+      {labels[status]}
+    </span>
   )
 }
