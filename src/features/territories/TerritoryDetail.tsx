@@ -68,7 +68,7 @@ export default function TerritoryDetail() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-blue-600 border-t-transparent" />
-          <p className="mt-4 text-gray-600">Loading territory...</p>
+          <p className="mt-4 text-slate-600">Loading territory...</p>
         </div>
       </div>
     )
@@ -79,8 +79,8 @@ export default function TerritoryDetail() {
     return (
       <div className="p-6 max-w-3xl mx-auto">
         <div className="text-center py-12">
-          <h2 className="text-xl font-semibold text-gray-900">Territory Not Found</h2>
-          <p className="mt-2 text-gray-600">This territory may have been deleted.</p>
+          <h2 className="text-xl font-semibold text-slate-900">Territory Not Found</h2>
+          <p className="mt-2 text-slate-600">This territory may have been deleted.</p>
           <Link
             to="/territories"
             className="mt-4 inline-block text-sm font-semibold text-blue-600 hover:text-blue-700"
@@ -93,7 +93,7 @@ export default function TerritoryDetail() {
   }
 
   const statusColors: Record<string, string> = {
-    'announced': 'bg-orange-100 text-orange-800',
+    'announced': 'bg-amber-100 text-amber-800',
     'in-progress': 'bg-blue-100 text-blue-800',
     'completed': 'bg-green-100 text-green-800',
     'rejected': 'bg-red-100 text-red-800',
@@ -109,11 +109,11 @@ export default function TerritoryDetail() {
     : '—'
 
   return (
-    <div className="p-6 max-w-4xl mx-auto">
+    <div className="p-6 max-w-4xl mx-auto animate-fade-in">
       {/* Back link */}
       <Link
         to="/territories"
-        className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 mb-4"
+        className="inline-flex items-center gap-1 text-sm text-slate-500 hover:text-slate-700 mb-4"
       >
         <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
@@ -125,16 +125,16 @@ export default function TerritoryDetail() {
       <div className="flex items-start justify-between mb-6">
         <div>
           <div className="flex items-center gap-3">
-            <h1 className="text-2xl font-bold text-gray-900">{territory.number}</h1>
+            <h1 className="text-2xl font-bold text-slate-900">{territory.number}</h1>
             <span
               className={`inline-block rounded-full px-3 py-1 text-xs font-medium ${
-                statusColors[territory.status] ?? 'bg-gray-100 text-gray-600'
+                statusColors[territory.status] ?? 'bg-slate-100 text-slate-600'
               }`}
             >
               {territory.status}
             </span>
           </div>
-          <p className="mt-1 text-gray-600">{territory.name}</p>
+          <p className="mt-1 text-slate-600">{territory.name}</p>
         </div>
       </div>
 
@@ -150,7 +150,7 @@ export default function TerritoryDetail() {
         <div className="space-y-6">
           {/* Territory card image */}
           {territory.card?.downloadUrl && (
-            <div className="rounded-lg border border-gray-200 overflow-hidden bg-white shadow-sm">
+            <div className="rounded-lg border border-slate-200 overflow-hidden bg-white shadow-sm">
               <img
                 src={territory.card.downloadUrl}
                 alt={`Territory card ${territory.number}`}
@@ -160,29 +160,29 @@ export default function TerritoryDetail() {
           )}
 
           {/* Territory info */}
-          <div className="rounded-lg border border-gray-200 bg-white p-5 shadow-sm">
-            <h2 className="text-sm font-semibold text-gray-900 mb-3">Territory Details</h2>
+          <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+            <h2 className="text-sm font-semibold text-slate-900 mb-3">Territory Details</h2>
             <dl className="space-y-2 text-sm">
               {territory.description && (
                 <div>
-                  <dt className="text-gray-500">Description</dt>
-                  <dd className="text-gray-900 mt-0.5">{territory.description}</dd>
+                  <dt className="text-slate-500">Description</dt>
+                  <dd className="text-slate-900 mt-0.5">{territory.description}</dd>
                 </div>
               )}
               <div>
-                <dt className="text-gray-500">Announced</dt>
-                <dd className="text-gray-900 mt-0.5">
+                <dt className="text-slate-500">Announced</dt>
+                <dd className="text-slate-900 mt-0.5">
                   {announcedStr} by {territory.announcedBy?.name ?? '—'}
                 </dd>
               </div>
               {territory.targetCompletionDate?.toDate && (
                 <div>
-                  <dt className="text-gray-500">Target Completion</dt>
+                  <dt className="text-slate-500">Target Completion</dt>
                   <dd className={`mt-0.5 ${
                     territory.status === 'in-progress' &&
                     territory.targetCompletionDate.toDate() < new Date()
                       ? 'text-red-600 font-medium'
-                      : 'text-gray-900'
+                      : 'text-slate-900'
                   }`}>
                     {territory.targetCompletionDate.toDate().toLocaleDateString('en-US', {
                       month: 'long',
@@ -198,8 +198,8 @@ export default function TerritoryDetail() {
               )}
               {territory.currentAssignment && (
                 <div>
-                  <dt className="text-gray-500">Assigned Leader</dt>
-                  <dd className="text-gray-900 mt-0.5">
+                  <dt className="text-slate-500">Assigned Leader</dt>
+                  <dd className="text-slate-900 mt-0.5">
                     {territory.currentAssignment.leaderName}
                     {isAssignedLeader && (
                       <span className="ml-2 text-xs text-blue-600 font-medium">(You)</span>
@@ -208,12 +208,12 @@ export default function TerritoryDetail() {
                 </div>
               )}
               <div>
-                <dt className="text-gray-500">Times Completed</dt>
-                <dd className="text-gray-900 mt-0.5">{territory.completionCount}</dd>
+                <dt className="text-slate-500">Times Completed</dt>
+                <dd className="text-slate-900 mt-0.5">{territory.completionCount}</dd>
               </div>
               {/* Report status */}
               <div>
-                <dt className="text-gray-500">Report Status</dt>
+                <dt className="text-slate-500">Report Status</dt>
                 <dd className="mt-0.5">
                   <ReportStatusBadge status={deriveReportStatus(territory)} />
                 </dd>
@@ -221,8 +221,8 @@ export default function TerritoryDetail() {
               {/* Actual completion date */}
               {territory.actualCompletionDate?.toDate && (
                 <div>
-                  <dt className="text-gray-500">Actual Completion</dt>
-                  <dd className="text-gray-900 mt-0.5">
+                  <dt className="text-slate-500">Actual Completion</dt>
+                  <dd className="text-slate-900 mt-0.5">
                     {territory.actualCompletionDate.toDate().toLocaleDateString('en-US', {
                       month: 'long',
                       day: 'numeric',
@@ -234,8 +234,8 @@ export default function TerritoryDetail() {
               {/* Report submitted at */}
               {territory.reportSubmittedAt?.toDate && (
                 <div>
-                  <dt className="text-gray-500">Report Submitted</dt>
-                  <dd className="text-gray-900 mt-0.5">
+                  <dt className="text-slate-500">Report Submitted</dt>
+                  <dd className="text-slate-900 mt-0.5">
                     {territory.reportSubmittedAt.toDate().toLocaleDateString('en-US', {
                       month: 'long',
                       day: 'numeric',
@@ -252,15 +252,15 @@ export default function TerritoryDetail() {
         <div className="space-y-6">
           {/* Submit report section */}
           {canReport && (
-            <div className="rounded-lg border border-gray-200 bg-white p-5 shadow-sm">
+            <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-sm font-semibold text-gray-900">Submit Report</h2>
+                <h2 className="text-sm font-semibold text-slate-900">Submit Report</h2>
                 <button
                   type="button"
                   onClick={() => setShowReportForm(!showReportForm)}
                   className={`text-xs font-medium px-3 py-1 rounded-md transition-colors ${
                     showReportForm
-                      ? 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                      ? 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                       : 'bg-blue-600 text-white hover:bg-blue-700'
                   }`}
                 >
@@ -273,7 +273,7 @@ export default function TerritoryDetail() {
               )}
 
               {!showReportForm && !isAssignedLeader && (
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-slate-500">
                   You can submit a report even though you're not the assigned leader.
                 </p>
               )}
@@ -312,20 +312,20 @@ export default function TerritoryDetail() {
           )}
 
           {/* Report history */}
-          <div className="rounded-lg border border-gray-200 bg-white p-5 shadow-sm">
-            <h2 className="text-sm font-semibold text-gray-900 mb-4">
+          <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+            <h2 className="text-sm font-semibold text-slate-900 mb-4">
               Report History ({reports.length})
             </h2>
 
             {isLoadingReports && (
               <div className="flex items-center gap-2 py-4">
                 <div className="h-5 w-5 animate-spin rounded-full border-2 border-blue-600 border-t-transparent" />
-                <span className="text-sm text-gray-500">Loading reports...</span>
+                <span className="text-sm text-slate-500">Loading reports...</span>
               </div>
             )}
 
             {!isLoadingReports && reports.length === 0 && (
-              <p className="text-sm text-gray-500">No reports submitted yet.</p>
+              <p className="text-sm text-slate-500">No reports submitted yet.</p>
             )}
 
             {!isLoadingReports && reports.length > 0 && (
@@ -363,11 +363,11 @@ function ReportRow({ report }: { report: Report }) {
       className={`rounded-md border p-3 ${
         report.completed
           ? 'border-green-200 bg-green-50'
-          : 'border-gray-200 bg-gray-50'
+          : 'border-slate-200 bg-slate-50'
       }`}
     >
       <div className="flex items-center justify-between mb-1">
-        <p className="text-xs font-medium text-gray-700">
+        <p className="text-xs font-medium text-slate-700">
           {report.reportedBy?.name ?? 'Unknown'}
         </p>
         <div className="flex items-center gap-2">
@@ -376,17 +376,17 @@ function ReportRow({ report }: { report: Report }) {
               Final
             </span>
           )}
-          <span className="text-xs text-gray-400">{dateStr}</span>
+          <span className="text-xs text-slate-400">{dateStr}</span>
         </div>
       </div>
       {report.actualCompletionDate?.toDate && (
-        <p className="text-xs text-gray-500 mt-1">
+        <p className="text-xs text-slate-500 mt-1">
           Completed: {report.actualCompletionDate.toDate().toLocaleDateString('en-US', {
             month: 'short', day: 'numeric', year: 'numeric',
           })}
         </p>
       )}
-      <p className="text-sm text-gray-900 whitespace-pre-wrap mt-1">{report.remarks}</p>
+      <p className="text-sm text-slate-900 whitespace-pre-wrap mt-1">{report.remarks}</p>
     </div>
   )
 }
@@ -398,7 +398,7 @@ function ReportRow({ report }: { report: Report }) {
 function ReportStatusBadge({ status }: { status: ReportStatus }) {
   const styles: Record<ReportStatus, string> = {
     on_time: 'bg-green-100 text-green-800',
-    late: 'bg-orange-100 text-orange-800',
+    late: 'bg-amber-100 text-amber-800',
     missing: 'bg-red-100 text-red-800',
   }
 

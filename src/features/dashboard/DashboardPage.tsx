@@ -48,13 +48,13 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="p-6 max-w-5xl mx-auto">
+    <div className="p-6 max-w-5xl mx-auto animate-fade-in">
       {/* Welcome */}
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">
+        <h1 className="text-2xl font-bold tracking-tight text-slate-900">
           Welcome, {appUser?.displayName ?? 'User'}
         </h1>
-        <p className="mt-1 text-gray-600">
+        <p className="mt-1 text-slate-600">
           {greetings[appUser?.role ?? 'publisher']}
         </p>
       </div>
@@ -79,7 +79,7 @@ export default function DashboardPage() {
       {/* Leader: pending assignment notifications */}
       {isLeader && unread.length > 0 && (
         <div className="mb-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
+          <h2 className="text-lg font-semibold text-slate-900 mb-3 flex items-center gap-2">
             <svg className="h-5 w-5 text-red-500" fill="currentColor" viewBox="0 0 24 24">
               <path d="M5.85 3.5a.75.75 0 00-1.117-1 9.719 9.719 0 00-2.348 4.876.75.75 0 001.479.248A8.219 8.219 0 015.85 3.5zM19.267 2.5a.75.75 0 10-1.118 1 8.22 8.22 0 011.987 4.124.75.75 0 001.48-.248A9.72 9.72 0 0019.266 2.5z" />
               <path fillRule="evenodd" d="M12 2.25A6.75 6.75 0 005.25 9v.75a8.217 8.217 0 01-2.119 5.52.75.75 0 00.298 1.206c1.544.57 3.16.99 4.831 1.243a3.75 3.75 0 107.48 0 24.583 24.583 0 004.83-1.244.75.75 0 00.298-1.205 8.217 8.217 0 01-2.118-5.52V9A6.75 6.75 0 0012 2.25zM9.75 18c0-.034 0-.067.002-.1a25.05 25.05 0 004.496 0l.002.1a2.25 2.25 0 01-4.5 0z" clipRule="evenodd" />
@@ -95,7 +95,7 @@ export default function DashboardPage() {
       )}
 
       {/* Stats cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
         <StatCard
           label={isLeader ? 'My In-Progress' : 'In Progress'}
           value={isLoading ? '...' : String(inProgress.length)}
@@ -115,7 +115,7 @@ export default function DashboardPage() {
 
       {/* Quick actions — role-based */}
       <div className="mb-8">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h2>
+        <h2 className="text-lg font-semibold text-slate-900 mb-4">Quick Actions</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {/* Everyone: view territories */}
           <QuickAction
@@ -194,7 +194,7 @@ export default function DashboardPage() {
       {/* Recent in-progress territories */}
       {!isLoading && inProgress.length > 0 && (
         <div>
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">
+          <h2 className="text-lg font-semibold text-slate-900 mb-4">
             {isLeader ? 'Your Active Territories' : 'Recent In-Progress'}
           </h2>
           <div className="space-y-3">
@@ -202,10 +202,10 @@ export default function DashboardPage() {
               <Link
                 key={t.id}
                 to={`/territories/${t.id}`}
-                className="flex items-center gap-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm hover:border-blue-300 hover:shadow-md transition-all"
+                className="flex items-center gap-4 rounded-lg border border-slate-200 bg-white p-4 shadow-card hover:border-blue-300 hover:shadow-card-hover transition-all duration-200"
               >
                 {t.card?.downloadUrl ? (
-                  <div className="h-12 w-16 flex-shrink-0 overflow-hidden rounded-md bg-gray-100">
+                  <div className="h-12 w-16 flex-shrink-0 overflow-hidden rounded-md bg-slate-100">
                     <img
                       src={t.card.downloadUrl}
                       alt={t.number}
@@ -214,20 +214,20 @@ export default function DashboardPage() {
                     />
                   </div>
                 ) : (
-                  <div className="h-12 w-16 flex-shrink-0 rounded-md bg-gray-100 flex items-center justify-center">
-                    <span className="text-xs text-gray-400">--</span>
+                  <div className="h-12 w-16 flex-shrink-0 rounded-md bg-slate-100 flex items-center justify-center">
+                    <span className="text-xs text-slate-400">--</span>
                   </div>
                 )}
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-bold text-gray-900">{t.number}</p>
-                  <p className="text-xs text-gray-500 truncate">{t.name}</p>
+                  <p className="text-sm font-bold text-slate-900">{t.number}</p>
+                  <p className="text-xs text-slate-500 truncate">{t.name}</p>
                 </div>
                 {t.currentAssignment && (
-                  <p className="text-xs text-gray-400 flex-shrink-0 hidden sm:block">
+                  <p className="text-xs text-slate-400 flex-shrink-0 hidden sm:block">
                     {t.currentAssignment.leaderName}
                   </p>
                 )}
-                <svg className="h-5 w-5 text-gray-300 flex-shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                <svg className="h-5 w-5 text-slate-300 flex-shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
                 </svg>
               </Link>
@@ -263,13 +263,13 @@ function StatCard({
   const colors = {
     blue: 'bg-blue-50 border-blue-200 text-blue-700',
     green: 'bg-green-50 border-green-200 text-green-700',
-    gray: 'bg-gray-50 border-gray-200 text-gray-700',
+    gray: 'bg-slate-50 border-slate-200 text-slate-700',
   }
 
   return (
-    <div className={`rounded-lg border p-5 ${colors[color]}`}>
-      <p className="text-sm font-medium opacity-80">{label}</p>
-      <p className="mt-1 text-3xl font-bold">{value}</p>
+    <div className={`rounded-lg border p-5 shadow-card ${colors[color]}`}>
+      <p className="text-xs font-semibold uppercase tracking-wider opacity-80">{label}</p>
+      <p className="mt-2 text-3xl font-bold">{value}</p>
     </div>
   )
 }
@@ -292,14 +292,14 @@ function QuickAction({
   return (
     <Link
       to={to}
-      className="flex items-start gap-4 rounded-lg border border-gray-200 bg-white p-5 shadow-sm hover:border-blue-300 hover:shadow-md transition-all"
+      className="flex items-start gap-4 rounded-lg border border-slate-200 bg-white p-5 shadow-card hover:border-blue-300 hover:shadow-card-hover active:scale-[0.98] transition-all duration-200"
     >
       <div className="flex-shrink-0 rounded-md bg-blue-50 p-2 text-blue-600">
         {icon}
       </div>
       <div>
-        <h3 className="text-sm font-semibold text-gray-900">{title}</h3>
-        <p className="mt-0.5 text-xs text-gray-500">{description}</p>
+        <h3 className="text-sm font-semibold text-slate-900">{title}</h3>
+        <p className="mt-0.5 text-xs text-slate-500">{description}</p>
       </div>
     </Link>
   )
@@ -361,7 +361,7 @@ function NotificationCard({ territory }: { territory: Territory }) {
   const isBusy = isAccepting || isRejecting
 
   return (
-    <div className="rounded-lg border border-orange-200 bg-orange-50 p-4 shadow-sm">
+    <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 shadow-sm">
       {error && (
         <div className="mb-3 rounded-md bg-red-50 border border-red-200 p-2">
           <p className="text-xs text-red-700">{error}</p>
@@ -371,7 +371,7 @@ function NotificationCard({ territory }: { territory: Territory }) {
       <div className="flex items-start gap-4">
         {/* Card thumbnail */}
         {territory.card?.downloadUrl ? (
-          <div className="h-16 w-20 flex-shrink-0 overflow-hidden rounded-md bg-gray-100">
+          <div className="h-16 w-20 flex-shrink-0 overflow-hidden rounded-md bg-slate-100">
             <img
               src={territory.card.downloadUrl}
               alt={territory.number}
@@ -380,28 +380,28 @@ function NotificationCard({ territory }: { territory: Territory }) {
             />
           </div>
         ) : (
-          <div className="h-16 w-20 flex-shrink-0 rounded-md bg-gray-100 flex items-center justify-center">
-            <span className="text-xs text-gray-400">--</span>
+          <div className="h-16 w-20 flex-shrink-0 rounded-md bg-slate-100 flex items-center justify-center">
+            <span className="text-xs text-slate-400">--</span>
           </div>
         )}
 
         {/* Info */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
-            <p className="text-sm font-bold text-gray-900">{territory.number}</p>
-            <span className="inline-block rounded-full bg-orange-200 px-2 py-0.5 text-xs font-medium text-orange-800">
+            <p className="text-sm font-bold text-slate-900">{territory.number}</p>
+            <span className="inline-block rounded-full bg-amber-200 px-2 py-0.5 text-xs font-medium text-amber-800">
               New Assignment
             </span>
           </div>
-          <p className="text-sm text-gray-700 truncate">{territory.name}</p>
+          <p className="text-sm text-slate-700 truncate">{territory.name}</p>
           <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1">
-            <p className="text-xs text-gray-500">Announced: {dateStr}</p>
+            <p className="text-xs text-slate-500">Announced: {dateStr}</p>
             {targetStr && (
-              <p className="text-xs text-gray-500">Due: {targetStr}</p>
+              <p className="text-xs text-slate-500">Due: {targetStr}</p>
             )}
           </div>
           {territory.announcedBy && (
-            <p className="text-xs text-gray-400 mt-0.5">
+            <p className="text-xs text-slate-400 mt-0.5">
               by {territory.announcedBy.name}
             </p>
           )}
@@ -451,7 +451,7 @@ function NotificationCard({ territory }: { territory: Territory }) {
               type="button"
               disabled={isBusy}
               onClick={() => setShowRejectConfirm(false)}
-              className="flex-1 rounded-md border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 transition-colors"
+              className="flex-1 rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50 transition-colors"
             >
               Cancel
             </button>

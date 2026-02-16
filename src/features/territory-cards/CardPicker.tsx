@@ -28,14 +28,14 @@ export default function CardPicker({ selectedCardId, onSelect }: CardPickerProps
     return (
       <div className="flex items-center gap-2 py-4">
         <div className="h-5 w-5 animate-spin rounded-full border-2 border-blue-600 border-t-transparent" />
-        <span className="text-sm text-gray-500">Loading cards...</span>
+        <span className="text-sm text-slate-500">Loading cards...</span>
       </div>
     )
   }
 
   if (cards.length === 0) {
     return (
-      <p className="text-sm text-gray-500 py-4">
+      <p className="text-sm text-slate-500 py-4">
         No available cards. Upload cards first in the Territory Cards page.
       </p>
     )
@@ -53,10 +53,10 @@ export default function CardPicker({ selectedCardId, onSelect }: CardPickerProps
             className={`relative rounded-lg border-2 overflow-hidden text-left transition-all ${
               isSelected
                 ? 'border-blue-600 ring-2 ring-blue-200'
-                : 'border-gray-200 hover:border-gray-300'
+                : 'border-slate-200 hover:border-slate-300'
             }`}
           >
-            <div className="aspect-[4/3] overflow-hidden bg-gray-100">
+            <div className="aspect-[4/3] overflow-hidden bg-slate-100">
               <img
                 src={card.downloadUrl}
                 alt={card.label}
@@ -66,14 +66,14 @@ export default function CardPicker({ selectedCardId, onSelect }: CardPickerProps
             </div>
             <div className="p-2">
               <div className="flex items-center gap-1">
-                <p className="text-xs font-bold text-gray-900 truncate">
+                <p className="text-xs font-bold text-slate-900 truncate">
                   {card.territoryNumber}
                 </p>
                 {card.isLinked && (
                   <span className="flex-shrink-0 inline-block w-2 h-2 rounded-full bg-blue-500" title="Currently linked to a territory" />
                 )}
               </div>
-              <p className="text-xs text-gray-500 truncate">{card.label}</p>
+              <p className="text-xs text-slate-500 truncate">{card.label}</p>
             </div>
             {isSelected && (
               <div className="absolute top-1 right-1 h-5 w-5 rounded-full bg-blue-600 flex items-center justify-center">

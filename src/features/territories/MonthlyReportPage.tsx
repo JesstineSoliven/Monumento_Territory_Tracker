@@ -74,12 +74,12 @@ export default function MonthlyReportPage() {
   }
 
   return (
-    <div className="p-6 max-w-6xl mx-auto">
+    <div className="p-6 max-w-6xl mx-auto animate-fade-in">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Monthly Report</h1>
-          <p className="mt-1 text-gray-600">
+          <h1 className="text-2xl font-bold text-slate-900">Monthly Report</h1>
+          <p className="mt-1 text-slate-600">
             View territory report status and export monthly data.
           </p>
         </div>
@@ -87,7 +87,7 @@ export default function MonthlyReportPage() {
           type="button"
           onClick={handleExport}
           disabled={filtered.length === 0}
-          className="rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98] transition-all duration-150"
         >
           Export CSV
         </button>
@@ -95,14 +95,14 @@ export default function MonthlyReportPage() {
 
       {/* Month selector */}
       <div className="mb-6">
-        <label htmlFor="monthSelect" className="block text-sm font-medium text-gray-700 mb-1">
+        <label htmlFor="monthSelect" className="block text-sm font-medium text-slate-700 mb-1">
           Select Month
         </label>
         <select
           id="monthSelect"
           value={selectedMonth}
           onChange={(e) => setSelectedMonth(e.target.value)}
-          className="w-full max-w-xs rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
+          className="w-full max-w-xs rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
         >
           {monthOptions.map((o) => (
             <option key={o.value} value={o.value}>
@@ -124,54 +124,54 @@ export default function MonthlyReportPage() {
       {isLoading && (
         <div className="flex items-center justify-center py-12">
           <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-blue-600 border-t-transparent" />
-          <p className="ml-4 text-gray-600">Loading...</p>
+          <p className="ml-4 text-slate-600">Loading...</p>
         </div>
       )}
 
       {/* Empty */}
       {!isLoading && filtered.length === 0 && (
         <div className="text-center py-12">
-          <p className="text-gray-500">No territories announced in {selectedLabel}.</p>
+          <p className="text-slate-500">No territories announced in {selectedLabel}.</p>
         </div>
       )}
 
       {/* Table */}
       {!isLoading && filtered.length > 0 && (
-        <div className="overflow-x-auto rounded-lg border border-gray-200">
+        <div className="overflow-x-auto rounded-lg border border-slate-200">
           <table className="w-full text-sm">
             <thead>
-              <tr className="bg-gray-50 text-left">
-                <th className="px-4 py-3 font-semibold text-gray-700">Territory</th>
-                <th className="px-4 py-3 font-semibold text-gray-700">Leader</th>
-                <th className="px-4 py-3 font-semibold text-gray-700">Target Date</th>
-                <th className="px-4 py-3 font-semibold text-gray-700">Actual Date</th>
-                <th className="px-4 py-3 font-semibold text-gray-700">Report Submitted</th>
-                <th className="px-4 py-3 font-semibold text-gray-700">Status</th>
+              <tr className="bg-slate-50 text-left sticky top-0 z-10">
+                <th className="px-4 py-3 font-semibold text-slate-700">Territory</th>
+                <th className="px-4 py-3 font-semibold text-slate-700">Leader</th>
+                <th className="px-4 py-3 font-semibold text-slate-700">Target Date</th>
+                <th className="px-4 py-3 font-semibold text-slate-700">Actual Date</th>
+                <th className="px-4 py-3 font-semibold text-slate-700">Report Submitted</th>
+                <th className="px-4 py-3 font-semibold text-slate-700">Status</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100">
+            <tbody className="divide-y divide-slate-100">
               {filtered.map((t) => {
                 const status = deriveReportStatus(t)
                 return (
-                  <tr key={t.id} className="hover:bg-gray-50">
+                  <tr key={t.id} className="hover:bg-slate-50">
                     <td className="px-4 py-3">
-                      <p className="font-medium text-gray-900">{t.number}</p>
-                      <p className="text-xs text-gray-500 truncate max-w-[200px]">{t.name}</p>
+                      <p className="font-medium text-slate-900">{t.number}</p>
+                      <p className="text-xs text-slate-500 truncate max-w-[200px]">{t.name}</p>
                     </td>
-                    <td className="px-4 py-3 text-gray-700">
+                    <td className="px-4 py-3 text-slate-700">
                       {t.currentAssignment?.leaderName ?? '—'}
                     </td>
-                    <td className="px-4 py-3 text-gray-700">
+                    <td className="px-4 py-3 text-slate-700">
                       {t.targetCompletionDate?.toDate?.()
                         ? t.targetCompletionDate.toDate().toLocaleDateString('en-US', dateOpts)
                         : '—'}
                     </td>
-                    <td className="px-4 py-3 text-gray-700">
+                    <td className="px-4 py-3 text-slate-700">
                       {t.actualCompletionDate?.toDate?.()
                         ? t.actualCompletionDate.toDate().toLocaleDateString('en-US', dateOpts)
                         : '—'}
                     </td>
-                    <td className="px-4 py-3 text-gray-700">
+                    <td className="px-4 py-3 text-slate-700">
                       {t.reportSubmittedAt?.toDate?.()
                         ? t.reportSubmittedAt.toDate().toLocaleDateString('en-US', dateOpts)
                         : '—'}
@@ -204,16 +204,16 @@ function SummaryCard({
   color: 'gray' | 'green' | 'orange' | 'red'
 }) {
   const styles = {
-    gray: 'bg-gray-50 border-gray-200 text-gray-700',
+    gray: 'bg-slate-50 border-slate-200 text-slate-700',
     green: 'bg-green-50 border-green-200 text-green-700',
-    orange: 'bg-orange-50 border-orange-200 text-orange-700',
+    orange: 'bg-amber-50 border-amber-200 text-amber-700',
     red: 'bg-red-50 border-red-200 text-red-700',
   }
 
   return (
-    <div className={`rounded-lg border p-4 ${styles[color]}`}>
-      <p className="text-sm font-medium opacity-80">{label}</p>
-      <p className="mt-1 text-2xl font-bold">{value}</p>
+    <div className={`rounded-lg border p-4 shadow-card ${styles[color]}`}>
+      <p className="text-xs font-semibold uppercase tracking-wider opacity-80">{label}</p>
+      <p className="mt-2 text-2xl font-bold">{value}</p>
     </div>
   )
 }
@@ -221,7 +221,7 @@ function SummaryCard({
 function StatusBadge({ status }: { status: ReportStatus }) {
   const styles: Record<ReportStatus, string> = {
     on_time: 'bg-green-100 text-green-800',
-    late: 'bg-orange-100 text-orange-800',
+    late: 'bg-amber-100 text-amber-800',
     missing: 'bg-red-100 text-red-800',
   }
 

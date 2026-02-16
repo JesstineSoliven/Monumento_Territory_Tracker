@@ -86,7 +86,7 @@ const ROLE_COLORS: Record<UserRole, string> = {
   admin: 'bg-red-100 text-red-700',
   servant: 'bg-purple-100 text-purple-700',
   leader: 'bg-blue-100 text-blue-700',
-  publisher: 'bg-gray-100 text-gray-600',
+  publisher: 'bg-slate-100 text-slate-600',
 }
 
 // ---------------------------------------------------------------------------
@@ -105,32 +105,32 @@ export default function AppLayout() {
   )
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-slate-50">
       {/* Mobile overlay */}
       {sidebarOpen && (
         <div
-          className="fixed inset-0 z-30 bg-black/50 lg:hidden"
+          className="fixed inset-0 z-30 bg-black/50 lg:hidden transition-opacity duration-200"
           onClick={() => setSidebarOpen(false)}
         />
       )}
 
       {/* Sidebar */}
       <aside
-        className={`fixed inset-y-0 left-0 z-40 w-64 bg-white border-r border-gray-200 transform transition-transform duration-200 lg:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-40 w-64 bg-white border-r border-slate-200 transform transition-transform duration-200 lg:translate-x-0 ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
         <div className="flex flex-col h-full">
           {/* Logo / app name */}
-          <div className="px-6 py-5 border-b border-gray-200">
-            <h1 className="text-lg font-bold text-gray-900">
+          <div className="px-6 py-5 border-b border-slate-200">
+            <h1 className="text-lg font-bold tracking-tight text-slate-900">
               Monumento
             </h1>
-            <p className="text-xs text-gray-500">Territory Tracker</p>
+            <p className="text-xs text-slate-500">Territory Tracker</p>
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 px-3 py-4 overflow-y-auto">
+          <nav className="flex-1 px-3 py-4 overflow-y-auto" aria-label="Main navigation">
             <ul className="space-y-1">
               {visibleNavItems.map((item) => {
                 const showBadge = item.to === '/' && notificationCount > 0
@@ -141,17 +141,17 @@ export default function AppLayout() {
                       end={item.to === '/'}
                       onClick={() => setSidebarOpen(false)}
                       className={({ isActive }) =>
-                        `flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition-colors ${
+                        `flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition-colors duration-150 ${
                           isActive
-                            ? 'bg-blue-50 text-blue-700'
-                            : 'text-gray-700 hover:bg-gray-100'
+                            ? 'bg-blue-50 text-blue-700 border-l-3 border-blue-600'
+                            : 'text-slate-700 hover:bg-slate-100'
                         }`
                       }
                     >
                       <span className="relative">
                         {item.icon}
                         {showBadge && (
-                          <span className="absolute -top-1.5 -right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white ring-2 ring-white">
+                          <span className="absolute -top-1.5 -right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white ring-2 ring-white animate-badge-pulse">
                             {notificationCount > 9 ? '9+' : notificationCount}
                           </span>
                         )}
@@ -170,13 +170,13 @@ export default function AppLayout() {
           </nav>
 
           {/* User section */}
-          <div className="border-t border-gray-200 px-4 py-4">
+          <div className="border-t border-slate-200 px-4 py-4">
             <div className="flex items-center gap-3 mb-3">
               <div className="h-9 w-9 rounded-full bg-blue-600 flex items-center justify-center text-white font-semibold text-sm">
                 {appUser.displayName.charAt(0).toUpperCase()}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-gray-900 truncate">
+                <p className="text-sm font-medium text-slate-900 truncate">
                   {appUser.displayName}
                 </p>
                 <span
@@ -192,10 +192,10 @@ export default function AppLayout() {
               type="button"
               disabled={isOperationLoading}
               onClick={logout}
-              className="w-full flex items-center justify-center gap-2 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="w-full flex items-center justify-center gap-2 rounded-md border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-150"
             >
               {isOperationLoading ? (
-                <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-gray-400 border-t-transparent" />
+                <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-slate-400 border-t-transparent" />
               ) : (
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" />
@@ -210,24 +210,24 @@ export default function AppLayout() {
       {/* Main content area */}
       <div className="lg:pl-64">
         {/* Top bar (mobile) */}
-        <header className="sticky top-0 z-20 bg-white border-b border-gray-200 lg:hidden">
+        <header className="sticky top-0 z-20 bg-white border-b border-slate-200 lg:hidden">
           <div className="flex items-center justify-between px-4 py-3">
             <button
               type="button"
               onClick={() => setSidebarOpen(true)}
-              className="rounded-md p-2 text-gray-600 hover:bg-gray-100"
+              className="rounded-md p-2 text-slate-600 hover:bg-slate-100 transition-colors duration-150"
             >
               <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
               </svg>
             </button>
-            <h1 className="text-sm font-bold text-gray-900">Monumento</h1>
+            <h1 className="text-sm font-bold tracking-tight text-slate-900">Monumento</h1>
             <div className="relative">
               <div className="h-8 w-8 rounded-full bg-blue-600 flex items-center justify-center text-white font-semibold text-xs">
                 {appUser.displayName.charAt(0).toUpperCase()}
               </div>
               {notificationCount > 0 && (
-                <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white ring-2 ring-white">
+                <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white ring-2 ring-white animate-badge-pulse">
                   {notificationCount > 9 ? '9+' : notificationCount}
                 </span>
               )}

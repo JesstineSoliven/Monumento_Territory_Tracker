@@ -133,13 +133,13 @@ export default function ReportForm({ territoryId, territory, onSuccess }: Report
           type="checkbox"
           checked={completed}
           onChange={(e) => setCompleted(e.target.checked)}
-          className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+          className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
         />
         <div>
-          <span className="text-sm font-medium text-gray-700">
+          <span className="text-sm font-medium text-slate-700">
             Mark territory as completed
           </span>
-          <p className="text-xs text-gray-500">
+          <p className="text-xs text-slate-500">
             Required. Check this to submit a final report.
           </p>
         </div>
@@ -148,7 +148,7 @@ export default function ReportForm({ territoryId, territory, onSuccess }: Report
       {/* Actual completion date */}
       {completed && (
         <div>
-          <label htmlFor="actualCompletionDate" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="actualCompletionDate" className="block text-sm font-medium text-slate-700 mb-1">
             Date Territory Was Completed <span className="text-red-500">*</span>
           </label>
           <input
@@ -159,10 +159,10 @@ export default function ReportForm({ territoryId, territory, onSuccess }: Report
             max={today}
             min={announcedDateStr ?? undefined}
             onChange={(e) => setActualCompletionDate(e.target.value)}
-            className={`w-full rounded-md border px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-1 ${
+            className={`w-full rounded-md border px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-1 ${
               dateValidationError
                 ? 'border-red-300 focus:border-red-500 focus:ring-red-500'
-                : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'
+                : 'border-slate-300 focus:border-blue-500 focus:ring-blue-500'
             }`}
           />
           {dateValidationError && (
@@ -183,7 +183,7 @@ export default function ReportForm({ territoryId, territory, onSuccess }: Report
       {/* Remarks */}
       {completed && (
         <div>
-          <label htmlFor="remarks" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="remarks" className="block text-sm font-medium text-slate-700 mb-1">
             Remarks <span className="text-red-500">*</span>
           </label>
           <textarea
@@ -193,7 +193,7 @@ export default function ReportForm({ territoryId, territory, onSuccess }: Report
             value={remarks}
             onChange={(e) => setRemarks(e.target.value)}
             placeholder="Describe what was covered, any issues encountered, streets worked, etc."
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none resize-none"
+            className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none resize-none"
           />
         </div>
       )}

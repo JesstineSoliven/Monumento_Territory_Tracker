@@ -27,12 +27,12 @@ export default function AnnouncePage() {
   const completed = territories.filter((t) => t.status === 'completed')
 
   return (
-    <div className="p-6 max-w-5xl mx-auto">
+    <div className="p-6 max-w-5xl mx-auto animate-fade-in">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Announce Territories</h1>
-          <p className="mt-1 text-gray-600">
+          <h1 className="text-2xl font-bold text-slate-900">Announce Territories</h1>
+          <p className="mt-1 text-slate-600">
             Select a territory card and assign a leader to announce a territory.
           </p>
         </div>
@@ -41,7 +41,7 @@ export default function AnnouncePage() {
           onClick={() => setShowForm(!showForm)}
           className={`rounded-md px-4 py-2 text-sm font-semibold transition-colors ${
             showForm
-              ? 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+              ? 'bg-slate-200 text-slate-700 hover:bg-slate-300'
               : 'bg-blue-600 text-white hover:bg-blue-700'
           }`}
         >
@@ -58,8 +58,8 @@ export default function AnnouncePage() {
 
       {/* Announce form */}
       {showForm && (
-        <div className="mb-8 rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">
+        <div className="mb-8 rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
+          <h2 className="text-lg font-semibold text-slate-900 mb-4">
             New Territory Announcement
           </h2>
           <AnnounceForm onSuccess={handleSuccess} />
@@ -70,7 +70,7 @@ export default function AnnouncePage() {
       {isLoading && (
         <div className="flex items-center justify-center py-12">
           <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-blue-600 border-t-transparent" />
-          <p className="ml-4 text-gray-600">Loading territories...</p>
+          <p className="ml-4 text-slate-600">Loading territories...</p>
         </div>
       )}
 
@@ -79,11 +79,11 @@ export default function AnnouncePage() {
         <div className="space-y-8">
           {/* In-progress territories */}
           <section>
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">
+            <h2 className="text-lg font-semibold text-slate-900 mb-4">
               In Progress ({inProgress.length})
             </h2>
             {inProgress.length === 0 ? (
-              <p className="text-sm text-gray-500">No territories currently in progress.</p>
+              <p className="text-sm text-slate-500">No territories currently in progress.</p>
             ) : (
               <div className="space-y-3">
                 {inProgress.map((territory) => (
@@ -96,7 +96,7 @@ export default function AnnouncePage() {
           {/* Completed territories */}
           {completed.length > 0 && (
             <section>
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">
+              <h2 className="text-lg font-semibold text-slate-900 mb-4">
                 Completed ({completed.length})
               </h2>
               <div className="space-y-3">
@@ -118,7 +118,7 @@ export default function AnnouncePage() {
 
 function TerritoryRow({ territory }: { territory: Territory }) {
   const statusColors: Record<string, string> = {
-    'announced': 'bg-orange-100 text-orange-800',
+    'announced': 'bg-amber-100 text-amber-800',
     'in-progress': 'bg-blue-100 text-blue-800',
     'completed': 'bg-green-100 text-green-800',
     'rejected': 'bg-red-100 text-red-800',
@@ -140,11 +140,11 @@ function TerritoryRow({ territory }: { territory: Territory }) {
 
   return (
     <div className={`flex items-center gap-4 rounded-lg border bg-white p-4 shadow-sm ${
-      isOverdue ? 'border-red-300' : 'border-gray-200'
+      isOverdue ? 'border-red-300' : 'border-slate-200'
     }`}>
       {/* Card thumbnail */}
       {territory.card?.downloadUrl ? (
-        <div className="h-16 w-20 flex-shrink-0 overflow-hidden rounded-md bg-gray-100">
+        <div className="h-16 w-20 flex-shrink-0 overflow-hidden rounded-md bg-slate-100">
           <img
             src={territory.card.downloadUrl}
             alt={territory.number}
@@ -153,18 +153,18 @@ function TerritoryRow({ territory }: { territory: Territory }) {
           />
         </div>
       ) : (
-        <div className="h-16 w-20 flex-shrink-0 rounded-md bg-gray-100 flex items-center justify-center">
-          <span className="text-xs text-gray-400">No card</span>
+        <div className="h-16 w-20 flex-shrink-0 rounded-md bg-slate-100 flex items-center justify-center">
+          <span className="text-xs text-slate-400">No card</span>
         </div>
       )}
 
       {/* Info */}
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
-          <p className="text-sm font-bold text-gray-900">{territory.number}</p>
+          <p className="text-sm font-bold text-slate-900">{territory.number}</p>
           <span
             className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium ${
-              statusColors[territory.status] ?? 'bg-gray-100 text-gray-600'
+              statusColors[territory.status] ?? 'bg-slate-100 text-slate-600'
             }`}
           >
             {territory.status}
@@ -176,9 +176,9 @@ function TerritoryRow({ territory }: { territory: Territory }) {
           )}
           <ReportStatusBadge status={deriveReportStatus(territory)} />
         </div>
-        <p className="text-sm text-gray-600 truncate">{territory.name}</p>
+        <p className="text-sm text-slate-600 truncate">{territory.name}</p>
         {territory.currentAssignment && (
-          <p className="text-xs text-gray-500 mt-1">
+          <p className="text-xs text-slate-500 mt-1">
             Assigned to: <span className="font-medium">{territory.currentAssignment.leaderName}</span>
           </p>
         )}
@@ -186,18 +186,18 @@ function TerritoryRow({ territory }: { territory: Territory }) {
 
       {/* Meta */}
       <div className="flex-shrink-0 text-right">
-        <p className="text-xs text-gray-400">{dateStr}</p>
+        <p className="text-xs text-slate-400">{dateStr}</p>
         {targetStr && (
-          <p className={`text-xs mt-0.5 ${isOverdue ? 'text-red-500 font-medium' : 'text-gray-400'}`}>
+          <p className={`text-xs mt-0.5 ${isOverdue ? 'text-red-500 font-medium' : 'text-slate-400'}`}>
             Due: {targetStr}
           </p>
         )}
         {territory.actualCompletionDate?.toDate && (
-          <p className="text-xs text-gray-400 mt-0.5">
+          <p className="text-xs text-slate-400 mt-0.5">
             Done: {territory.actualCompletionDate.toDate().toLocaleDateString('en-US', dateOpts)}
           </p>
         )}
-        <p className="text-xs text-gray-400 mt-0.5">
+        <p className="text-xs text-slate-400 mt-0.5">
           by {territory.announcedBy?.name ?? '—'}
         </p>
       </div>
@@ -212,7 +212,7 @@ function TerritoryRow({ territory }: { territory: Territory }) {
 function ReportStatusBadge({ status }: { status: ReportStatus }) {
   const styles: Record<ReportStatus, string> = {
     on_time: 'bg-green-100 text-green-800',
-    late: 'bg-orange-100 text-orange-800',
+    late: 'bg-amber-100 text-amber-800',
     missing: 'bg-red-100 text-red-800',
   }
 

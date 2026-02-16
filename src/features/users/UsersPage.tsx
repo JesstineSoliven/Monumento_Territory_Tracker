@@ -15,7 +15,7 @@ const ROLE_COLORS: Record<UserRole, string> = {
   admin: 'bg-red-100 text-red-700',
   servant: 'bg-purple-100 text-purple-700',
   leader: 'bg-blue-100 text-blue-700',
-  publisher: 'bg-gray-100 text-gray-600',
+  publisher: 'bg-slate-100 text-slate-600',
 }
 
 export default function UsersPage() {
@@ -81,10 +81,10 @@ export default function UsersPage() {
   const leaders = users.filter((u) => u.role === 'leader' && u.isActive)
 
   return (
-    <div className="p-6 max-w-5xl mx-auto">
+    <div className="p-6 max-w-5xl mx-auto animate-fade-in">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Manage Users</h1>
-        <p className="mt-1 text-gray-600">
+        <h1 className="text-2xl font-bold tracking-tight text-slate-900">Manage Users</h1>
+        <p className="mt-1 text-slate-600">
           View all registered users. Change roles, activate/deactivate accounts, and manage leader schedules.
         </p>
       </div>
@@ -98,41 +98,41 @@ export default function UsersPage() {
       {isLoading && (
         <div className="flex items-center justify-center py-12">
           <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-blue-600 border-t-transparent" />
-          <p className="ml-4 text-gray-600">Loading users...</p>
+          <p className="ml-4 text-slate-600">Loading users...</p>
         </div>
       )}
 
       {!isLoading && users.length === 0 && (
-        <p className="text-sm text-gray-500 py-8 text-center">No users found.</p>
+        <p className="text-sm text-slate-500 py-8 text-center">No users found.</p>
       )}
 
       {!isLoading && activeUsers.length > 0 && (
         <section className="mb-8">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">
+          <h2 className="text-lg font-semibold text-slate-900 mb-4">
             Active Users ({activeUsers.length})
           </h2>
-          <div className="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+          <div className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
+            <table className="min-w-full divide-y divide-slate-200">
+              <thead className="bg-slate-50">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
                     User
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
                     Email
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
                     Role
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
                     Congregation
                   </th>
-                  <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 py-3 text-right text-xs font-medium text-slate-500 uppercase tracking-wider">
                     Actions
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200">
+              <tbody className="divide-y divide-slate-200">
                 {activeUsers.map((user) => (
                   <UserRow
                     key={user.uid}
@@ -152,30 +152,30 @@ export default function UsersPage() {
       {/* Leader Assigned Ministry Days */}
       {!isLoading && leaders.length > 0 && (
         <section className="mb-8">
-          <h2 className="text-lg font-semibold text-gray-900 mb-2">
+          <h2 className="text-lg font-semibold text-slate-900 mb-2">
             Leader Assigned Ministry Days
           </h2>
-          <p className="text-sm text-gray-500 mb-4">
+          <p className="text-sm text-slate-500 mb-4">
             Assign ministry days for each leader. Leaders will see their assigned days on their dashboard.
           </p>
-          <div className="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+          <div className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
+            <table className="min-w-full divide-y divide-slate-200">
+              <thead className="bg-slate-50">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
                     Leader
                   </th>
                   {ALL_MINISTRY_DAYS.map((day) => (
                     <th
                       key={day}
-                      className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider"
+                      className="px-4 py-3 text-center text-xs font-medium text-slate-500 uppercase tracking-wider"
                     >
                       {day}
                     </th>
                   ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200">
+              <tbody className="divide-y divide-slate-200">
                 {leaders.map((leader) => (
                   <LeaderDayRow
                     key={leader.uid}
@@ -192,31 +192,31 @@ export default function UsersPage() {
 
       {!isLoading && deactivatedUsers.length > 0 && (
         <section>
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">
+          <h2 className="text-lg font-semibold text-slate-900 mb-4">
             Deactivated ({deactivatedUsers.length})
           </h2>
-          <div className="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+          <div className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
+            <table className="min-w-full divide-y divide-slate-200">
+              <thead className="bg-slate-50">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
                     User
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
                     Email
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
                     Role
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
                     Congregation
                   </th>
-                  <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 py-3 text-right text-xs font-medium text-slate-500 uppercase tracking-wider">
                     Actions
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200">
+              <tbody className="divide-y divide-slate-200">
                 {deactivatedUsers.map((user) => (
                   <UserRow
                     key={user.uid}
@@ -265,7 +265,7 @@ function UserRow({
     : '—'
 
   return (
-    <tr className={!user.isActive ? 'bg-gray-50 opacity-75' : ''}>
+    <tr className={!user.isActive ? 'bg-slate-50 opacity-75' : ''}>
       {/* Name + avatar */}
       <td className="px-4 py-3 whitespace-nowrap">
         <div className="flex items-center gap-3">
@@ -273,17 +273,17 @@ function UserRow({
             {user.displayName.charAt(0).toUpperCase()}
           </div>
           <div>
-            <p className="text-sm font-medium text-gray-900">
+            <p className="text-sm font-medium text-slate-900">
               {user.displayName}
               {isSelf && <span className="ml-1 text-xs text-blue-600">(You)</span>}
             </p>
-            <p className="text-xs text-gray-400">{dateStr}</p>
+            <p className="text-xs text-slate-400">{dateStr}</p>
           </div>
         </div>
       </td>
 
       {/* Email */}
-      <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+      <td className="px-4 py-3 whitespace-nowrap text-sm text-slate-600">
         {user.email}
       </td>
 
@@ -302,7 +302,7 @@ function UserRow({
             value={user.role}
             disabled={isUpdating}
             onChange={(e) => onRoleChange(user.uid, e.target.value as UserRole)}
-            className="rounded-md border border-gray-300 px-2 py-1 text-xs text-gray-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+            className="rounded-md border border-slate-300 px-2 py-1 text-xs text-slate-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {ALL_ROLES.map((role) => (
               <option key={role} value={role}>
@@ -314,14 +314,14 @@ function UserRow({
       </td>
 
       {/* Congregation */}
-      <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+      <td className="px-4 py-3 whitespace-nowrap text-sm text-slate-600">
         {user.congregation}
       </td>
 
       {/* Actions */}
       <td className="px-4 py-3 whitespace-nowrap text-right">
         {isSelf ? (
-          <span className="text-xs text-gray-400">—</span>
+          <span className="text-xs text-slate-400">—</span>
         ) : (
           <button
             type="button"
@@ -368,10 +368,10 @@ function LeaderDayRow({
             {leader.displayName.charAt(0).toUpperCase()}
           </div>
           <div>
-            <p className="text-sm font-medium text-gray-900">
+            <p className="text-sm font-medium text-slate-900">
               {leader.displayName}
             </p>
-            <p className="text-xs text-gray-400">{leader.congregation}</p>
+            <p className="text-xs text-slate-400">{leader.congregation}</p>
           </div>
         </div>
       </td>
@@ -388,7 +388,7 @@ function LeaderDayRow({
               className={`inline-flex items-center justify-center h-8 w-8 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
                 isChecked
                   ? 'bg-blue-600 text-white hover:bg-blue-700'
-                  : 'bg-gray-100 text-gray-400 hover:bg-gray-200'
+                  : 'bg-slate-100 text-slate-400 hover:bg-slate-200'
               }`}
               title={`${isChecked ? 'Remove' : 'Assign'} ${day}`}
             >

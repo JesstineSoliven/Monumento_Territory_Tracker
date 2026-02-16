@@ -46,9 +46,9 @@ export default function CardThumbnail({
   }
 
   return (
-    <div className="relative rounded-lg border border-gray-200 bg-white shadow-sm overflow-hidden">
+    <div className="relative rounded-lg border border-slate-200 bg-white shadow-sm overflow-hidden">
       {/* Image */}
-      <div className="aspect-[4/3] overflow-hidden bg-gray-100">
+      <div className="aspect-[4/3] overflow-hidden bg-slate-100">
         <img
           src={card.downloadUrl}
           alt={card.label}
@@ -59,32 +59,32 @@ export default function CardThumbnail({
 
       {/* Info */}
       <div className="p-3">
-        <p className="text-sm font-bold text-gray-900 truncate">
+        <p className="text-sm font-bold text-slate-900 truncate">
           {card.territoryNumber}
         </p>
-        <p className="text-xs text-gray-600 truncate mt-0.5">{card.label}</p>
+        <p className="text-xs text-slate-600 truncate mt-0.5">{card.label}</p>
 
         {/* Description fields */}
         {(card.territoryOwner || card.characteristic || card.territorySize || card.nearestMeetingPlace) && (
-          <div className="mt-2 space-y-0.5 border-t border-gray-100 pt-2">
+          <div className="mt-2 space-y-0.5 border-t border-slate-100 pt-2">
             {card.territoryOwner && (
-              <p className="text-xs text-gray-500 truncate">
-                <span className="font-medium text-gray-600">Owner:</span> {card.territoryOwner}
+              <p className="text-xs text-slate-500 truncate">
+                <span className="font-medium text-slate-600">Owner:</span> {card.territoryOwner}
               </p>
             )}
             {card.characteristic && (
-              <p className="text-xs text-gray-500 truncate">
-                <span className="font-medium text-gray-600">Type:</span> {card.characteristic}
+              <p className="text-xs text-slate-500 truncate">
+                <span className="font-medium text-slate-600">Type:</span> {card.characteristic}
               </p>
             )}
             {card.territorySize && (
-              <p className="text-xs text-gray-500 truncate">
-                <span className="font-medium text-gray-600">Size:</span> {card.territorySize}
+              <p className="text-xs text-slate-500 truncate">
+                <span className="font-medium text-slate-600">Size:</span> {card.territorySize}
               </p>
             )}
             {card.nearestMeetingPlace && (
-              <p className="text-xs text-gray-500 truncate">
-                <span className="font-medium text-gray-600">Meeting Place:</span> {card.nearestMeetingPlace}
+              <p className="text-xs text-slate-500 truncate">
+                <span className="font-medium text-slate-600">Meeting Place:</span> {card.nearestMeetingPlace}
               </p>
             )}
           </div>
@@ -92,7 +92,7 @@ export default function CardThumbnail({
 
         <div className="flex items-center justify-between mt-2">
           <div className="flex items-center gap-2">
-            <span className="text-xs text-gray-400">
+            <span className="text-xs text-slate-400">
               {formatFileSize(card.fileSize)}
             </span>
             {/* Linked indicator (non-blocking — informational only) */}
@@ -127,7 +127,7 @@ export default function CardThumbnail({
 
       {/* Confirmation dialog overlay */}
       {showConfirm && (
-        <div className="absolute inset-0 flex items-center justify-center bg-gray-900/60 backdrop-blur-sm">
+        <div className="absolute inset-0 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm">
           <div className="bg-white rounded-lg shadow-lg p-4 mx-3 max-w-[280px]">
             <div className="flex items-center gap-2 mb-2">
               <div className="flex-shrink-0 rounded-full bg-red-100 p-1.5">
@@ -135,11 +135,11 @@ export default function CardThumbnail({
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
                 </svg>
               </div>
-              <h3 className="text-sm font-semibold text-gray-900">
+              <h3 className="text-sm font-semibold text-slate-900">
                 Delete Card?
               </h3>
             </div>
-            <p className="text-xs text-gray-600 mb-3">
+            <p className="text-xs text-slate-600 mb-3">
               This will permanently delete <span className="font-semibold">{card.territoryNumber}</span> and its image. This action cannot be undone.
             </p>
             {card.isLinked && (
@@ -151,7 +151,7 @@ export default function CardThumbnail({
               <button
                 type="button"
                 onClick={handleCancelDelete}
-                className="flex-1 rounded-md border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                className="flex-1 rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50 transition-colors"
               >
                 Cancel
               </button>

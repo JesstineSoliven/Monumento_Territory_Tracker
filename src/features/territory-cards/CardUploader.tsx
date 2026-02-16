@@ -219,11 +219,11 @@ export default function CardUploader({ uploader, onUploadComplete }: CardUploade
         className={`cursor-pointer rounded-lg border-2 border-dashed p-8 text-center transition-colors ${
           isDragOver
             ? 'border-blue-500 bg-blue-50'
-            : 'border-gray-300 bg-gray-50 hover:border-gray-400'
+            : 'border-slate-300 bg-slate-50 hover:border-slate-400'
         } ${isUploading ? 'pointer-events-none opacity-50' : ''}`}
       >
         <svg
-          className="mx-auto h-10 w-10 text-gray-400"
+          className="mx-auto h-10 w-10 text-slate-400"
           fill="none"
           viewBox="0 0 24 24"
           strokeWidth={1.5}
@@ -235,11 +235,11 @@ export default function CardUploader({ uploader, onUploadComplete }: CardUploade
             d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"
           />
         </svg>
-        <p className="mt-2 text-sm text-gray-600">
+        <p className="mt-2 text-sm text-slate-600">
           Drag and drop images here, or{' '}
           <span className="font-semibold text-blue-600">click to browse</span>
         </p>
-        <p className="mt-1 text-xs text-gray-400">
+        <p className="mt-1 text-xs text-slate-400">
           JPEG, PNG, WebP — max 5 MB each — up to 30 files
         </p>
         <input
@@ -256,7 +256,7 @@ export default function CardUploader({ uploader, onUploadComplete }: CardUploade
       {hasFiles && (
         <div className="mt-4">
           <div className="flex items-center justify-between mb-3">
-            <p className="text-sm font-medium text-gray-700">
+            <p className="text-sm font-medium text-slate-700">
               {files.length} file{files.length !== 1 ? 's' : ''} selected
               {completedCount > 0 && (
                 <span className="text-green-600 ml-1">
@@ -284,7 +284,7 @@ export default function CardUploader({ uploader, onUploadComplete }: CardUploade
                     ? 'border-red-200 bg-red-50'
                     : f.status === 'complete'
                       ? 'border-green-200 bg-green-50'
-                      : 'border-gray-200 bg-white'
+                      : 'border-slate-200 bg-white'
                 }`}
               >
                 {/* File header row */}
@@ -298,11 +298,11 @@ export default function CardUploader({ uploader, onUploadComplete }: CardUploade
                       <span className="text-red-600 text-sm font-bold">&#10005;</span>
                     )}
                     {(f.status === 'pending' || f.status === 'uploading') && (
-                      <span className="inline-block h-2 w-2 rounded-full bg-gray-400" />
+                      <span className="inline-block h-2 w-2 rounded-full bg-slate-400" />
                     )}
 
-                    <p className="text-sm text-gray-900 truncate">{f.file.name}</p>
-                    <span className="text-xs text-gray-400 flex-shrink-0">
+                    <p className="text-sm text-slate-900 truncate">{f.file.name}</p>
+                    <span className="text-xs text-slate-400 flex-shrink-0">
                       {formatFileSize(f.file.size)}
                     </span>
                   </div>
@@ -312,7 +312,7 @@ export default function CardUploader({ uploader, onUploadComplete }: CardUploade
                     <button
                       type="button"
                       onClick={() => handleRemoveFile(f.id)}
-                      className="text-xs text-gray-400 hover:text-red-600 ml-2"
+                      className="text-xs text-slate-400 hover:text-red-600 ml-2"
                     >
                       Remove
                     </button>
@@ -326,7 +326,7 @@ export default function CardUploader({ uploader, onUploadComplete }: CardUploade
 
                 {/* Progress bar */}
                 {f.status === 'uploading' && (
-                  <div className="mt-2 w-full bg-gray-200 rounded-full h-1.5">
+                  <div className="mt-2 w-full bg-slate-200 rounded-full h-1.5">
                     <div
                       className="bg-blue-600 h-1.5 rounded-full transition-all duration-200"
                       style={{ width: `${f.progress}%` }}
@@ -345,7 +345,7 @@ export default function CardUploader({ uploader, onUploadComplete }: CardUploade
                         onChange={(e) =>
                           handleMetadataChange(f.id, 'territoryNumber', e.target.value)
                         }
-                        className="flex-1 rounded border border-gray-300 px-2 py-1 text-xs text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
+                        className="flex-1 rounded border border-slate-300 px-2 py-1 text-xs text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
                       />
                       <input
                         type="text"
@@ -354,7 +354,7 @@ export default function CardUploader({ uploader, onUploadComplete }: CardUploade
                         onChange={(e) =>
                           handleMetadataChange(f.id, 'label', e.target.value)
                         }
-                        className="flex-1 rounded border border-gray-300 px-2 py-1 text-xs text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
+                        className="flex-1 rounded border border-slate-300 px-2 py-1 text-xs text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
                       />
                     </div>
                     <div className="flex gap-2">
@@ -365,7 +365,7 @@ export default function CardUploader({ uploader, onUploadComplete }: CardUploade
                         onChange={(e) =>
                           handleMetadataChange(f.id, 'territoryOwner', e.target.value)
                         }
-                        className="flex-1 rounded border border-gray-300 px-2 py-1 text-xs text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
+                        className="flex-1 rounded border border-slate-300 px-2 py-1 text-xs text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
                       />
                       <input
                         type="text"
@@ -374,7 +374,7 @@ export default function CardUploader({ uploader, onUploadComplete }: CardUploade
                         onChange={(e) =>
                           handleMetadataChange(f.id, 'characteristic', e.target.value)
                         }
-                        className="flex-1 rounded border border-gray-300 px-2 py-1 text-xs text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
+                        className="flex-1 rounded border border-slate-300 px-2 py-1 text-xs text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
                       />
                     </div>
                     <div className="flex gap-2">
@@ -385,7 +385,7 @@ export default function CardUploader({ uploader, onUploadComplete }: CardUploade
                         onChange={(e) =>
                           handleMetadataChange(f.id, 'territorySize', e.target.value)
                         }
-                        className="flex-1 rounded border border-gray-300 px-2 py-1 text-xs text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
+                        className="flex-1 rounded border border-slate-300 px-2 py-1 text-xs text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
                       />
                       <input
                         type="text"
@@ -394,7 +394,7 @@ export default function CardUploader({ uploader, onUploadComplete }: CardUploade
                         onChange={(e) =>
                           handleMetadataChange(f.id, 'nearestMeetingPlace', e.target.value)
                         }
-                        className="flex-1 rounded border border-gray-300 px-2 py-1 text-xs text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
+                        className="flex-1 rounded border border-slate-300 px-2 py-1 text-xs text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
                       />
                     </div>
                   </div>

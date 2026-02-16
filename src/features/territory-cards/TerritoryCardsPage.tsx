@@ -58,11 +58,11 @@ export default function TerritoryCardsPage() {
   // -------------------------------------------------------------------
 
   return (
-    <div className="p-6 max-w-7xl mx-auto">
+    <div className="p-6 max-w-7xl mx-auto animate-fade-in">
       {/* Page header */}
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">Territory Cards</h1>
-        <p className="mt-2 text-gray-600">
+        <h1 className="text-2xl font-bold tracking-tight text-slate-900">Territory Cards</h1>
+        <p className="mt-2 text-slate-600">
           Upload and manage territory card images.
         </p>
       </div>
@@ -76,7 +76,7 @@ export default function TerritoryCardsPage() {
 
       {/* Upload section */}
       <div className="mb-8">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">
+        <h2 className="text-lg font-semibold text-slate-900 mb-4">
           Upload New Cards
         </h2>
         <CardUploader
@@ -90,11 +90,11 @@ export default function TerritoryCardsPage() {
         />
       </div>
 
-      <hr className="my-8 border-gray-200" />
+      <hr className="my-8 border-slate-200" />
 
       {/* Card gallery */}
       <div>
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">
+        <h2 className="text-lg font-semibold text-slate-900 mb-4">
           All Cards ({cards.length})
         </h2>
 
@@ -102,21 +102,21 @@ export default function TerritoryCardsPage() {
         {isLoading && (
           <div className="flex items-center justify-center py-12">
             <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-blue-600 border-t-transparent" />
-            <p className="ml-4 text-gray-600">Loading cards...</p>
+            <p className="ml-4 text-slate-600">Loading cards...</p>
           </div>
         )}
 
         {/* Empty state */}
         {!isLoading && cards.length === 0 && (
           <div className="text-center py-12">
-            <p className="text-gray-500">No territory cards uploaded yet.</p>
+            <p className="text-slate-500">No territory cards uploaded yet.</p>
           </div>
         )}
 
         {/* Available cards */}
         {!isLoading && availableCards.length > 0 && (
           <div className="mb-8">
-            <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-3">
+            <h3 className="text-sm font-medium text-slate-500 uppercase tracking-wider mb-3">
               Available ({availableCards.length})
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -135,7 +135,7 @@ export default function TerritoryCardsPage() {
         {/* Linked cards */}
         {!isLoading && linkedCards.length > 0 && (
           <div>
-            <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-3">
+            <h3 className="text-sm font-medium text-slate-500 uppercase tracking-wider mb-3">
               Linked to Territories ({linkedCards.length})
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">

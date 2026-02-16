@@ -123,7 +123,7 @@ export default function AnnounceForm({ onSuccess }: { onSuccess: () => void }) {
 
       {/* Step 1: Select territory card */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium text-slate-700 mb-2">
           1. Select a Territory Card
         </label>
         <CardPicker
@@ -147,16 +147,16 @@ export default function AnnounceForm({ onSuccess }: { onSuccess: () => void }) {
 
       {/* Step 2: Assign leader */}
       <div>
-        <label htmlFor="leader" className="block text-sm font-medium text-gray-700 mb-1">
+        <label htmlFor="leader" className="block text-sm font-medium text-slate-700 mb-1">
           2. Assign a Leader
         </label>
         {isLoadingLeaders ? (
           <div className="flex items-center gap-2 py-2">
             <div className="h-4 w-4 animate-spin rounded-full border-2 border-blue-600 border-t-transparent" />
-            <span className="text-sm text-gray-500">Loading leaders...</span>
+            <span className="text-sm text-slate-500">Loading leaders...</span>
           </div>
         ) : leaders.length === 0 ? (
-          <p className="text-sm text-gray-500 py-2">
+          <p className="text-sm text-slate-500 py-2">
             No active leaders found. Ask an admin to assign the leader role to users.
           </p>
         ) : (
@@ -164,7 +164,7 @@ export default function AnnounceForm({ onSuccess }: { onSuccess: () => void }) {
             id="leader"
             value={selectedLeaderId}
             onChange={(e) => setSelectedLeaderId(e.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
+            className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
           >
             <option value="">— Select a leader —</option>
             {leaders.map((leader) => (
@@ -178,7 +178,7 @@ export default function AnnounceForm({ onSuccess }: { onSuccess: () => void }) {
 
       {/* Step 3: Target completion date */}
       <div>
-        <label htmlFor="targetCompletionDate" className="block text-sm font-medium text-gray-700 mb-1">
+        <label htmlFor="targetCompletionDate" className="block text-sm font-medium text-slate-700 mb-1">
           3. Target Completion Date
         </label>
         <input
@@ -187,24 +187,24 @@ export default function AnnounceForm({ onSuccess }: { onSuccess: () => void }) {
           value={targetCompletionDate}
           min={today}
           onChange={(e) => setTargetCompletionDate(e.target.value)}
-          className={`w-full rounded-md border px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-1 ${
+          className={`w-full rounded-md border px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-1 ${
             dateValidationError
               ? 'border-red-300 focus:border-red-500 focus:ring-red-500'
-              : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'
+              : 'border-slate-300 focus:border-blue-500 focus:ring-blue-500'
           }`}
         />
         {dateValidationError && (
           <p className="mt-1 text-xs text-red-600">{dateValidationError}</p>
         )}
-        <p className="mt-1 text-xs text-gray-400">
+        <p className="mt-1 text-xs text-slate-400">
           The date by which the territory should be completed.
         </p>
       </div>
 
       {/* Step 4: Description (optional) */}
       <div>
-        <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
-          4. Description <span className="text-gray-400 font-normal">(optional)</span>
+        <label htmlFor="description" className="block text-sm font-medium text-slate-700 mb-1">
+          4. Description <span className="text-slate-400 font-normal">(optional)</span>
         </label>
         <textarea
           id="description"
@@ -212,7 +212,7 @@ export default function AnnounceForm({ onSuccess }: { onSuccess: () => void }) {
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           placeholder="Any special instructions or notes about this territory..."
-          className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none resize-none"
+          className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none resize-none"
         />
       </div>
 
@@ -220,7 +220,7 @@ export default function AnnounceForm({ onSuccess }: { onSuccess: () => void }) {
       <button
         type="submit"
         disabled={!isFormValid || isSubmitting}
-        className="w-full flex items-center justify-center gap-2 rounded-md bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full flex items-center justify-center gap-2 rounded-md bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98] transition-all duration-150"
       >
         {isSubmitting && (
           <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
