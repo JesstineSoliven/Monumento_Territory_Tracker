@@ -109,6 +109,19 @@ export interface TerritoryCard {
   updatedAt: Timestamp
 }
 
+// --- Public Talk Outline History ---
+
+export interface PublicTalkPresentation {
+  id: string
+  outlineTitle: string
+  outlineKey: string // lowercase normalized key for search/dedup
+  lastPresentedDate: Timestamp
+  presenterName: string
+  nextEligibleDate: Timestamp // derived: lastPresentedDate + 90 days
+  createdAt: Timestamp
+  createdBy: string // uid
+}
+
 // --- Upload Tracking ---
 
 export type FileUploadStatus = 'pending' | 'uploading' | 'complete' | 'error'

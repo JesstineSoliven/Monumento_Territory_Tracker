@@ -16,6 +16,8 @@ const AnnouncePage = lazy(() => import('../features/territories/AnnouncePage'))
 const MonthlyReportPage = lazy(() => import('../features/territories/MonthlyReportPage'))
 const UsersPage = lazy(() => import('../features/users/UsersPage'))
 const SystemResetPage = lazy(() => import('../features/admin/SystemResetPage'))
+const PublicTalkSearchPage = lazy(() => import('../features/public-talks/PublicTalkSearchPage'))
+const PublicTalkImportPage = lazy(() => import('../features/public-talks/PublicTalkImportPage'))
 
 // ---------------------------------------------------------------------------
 // Route-level loading fallback — shown while lazy chunks download
@@ -68,6 +70,17 @@ export const router = createBrowserRouter([
         element: withSuspense(TerritoryDetail),
       },
 
+      // --- Leader + Servant + Admin routes ---
+      {
+        element: <RoleGuard allowedRoles={['admin', 'servant', 'leader']} />,
+        children: [
+          {
+            path: '/public-talks',
+            element: withSuspense(PublicTalkSearchPage),
+          },
+        ],
+      },
+
       // --- Servant + Admin routes ---
       {
         element: <RoleGuard allowedRoles={['admin', 'servant']} />,
@@ -98,6 +111,10 @@ export const router = createBrowserRouter([
           {
             path: '/system-reset',
             element: withSuspense(SystemResetPage),
+          },
+          {
+            path: '/public-talks/import',
+            element: withSuspense(PublicTalkImportPage),
           },
         ],
       },
