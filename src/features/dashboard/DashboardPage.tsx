@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import type { Territory } from '../../shared/types'
 import { useAuth } from '../../shared/hooks/useAuth'
 import { useNotifications } from '../../shared/hooks/useNotifications'
+import SafeImage from '../../shared/components/SafeImage'
 import {
   subscribeToTerritories,
   subscribeToMyTerritories,
@@ -204,20 +205,11 @@ export default function DashboardPage() {
                 to={`/territories/${t.id}`}
                 className="flex items-center gap-4 rounded-lg border border-slate-200 bg-white p-4 shadow-card hover:border-blue-300 hover:shadow-card-hover transition-all duration-200"
               >
-                {t.card?.downloadUrl ? (
-                  <div className="h-12 w-16 flex-shrink-0 overflow-hidden rounded-md bg-slate-100">
-                    <img
-                      src={t.card.downloadUrl}
-                      alt={t.number}
-                      loading="lazy"
-                      className="h-full w-full object-cover"
-                    />
-                  </div>
-                ) : (
-                  <div className="h-12 w-16 flex-shrink-0 rounded-md bg-slate-100 flex items-center justify-center">
-                    <span className="text-xs text-slate-400">--</span>
-                  </div>
-                )}
+                <SafeImage
+                  src={t.card?.downloadUrl}
+                  alt={t.number}
+                  containerClassName="h-12 w-16 flex-shrink-0 relative overflow-hidden rounded-md bg-slate-100"
+                />
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-bold text-slate-900">{t.number}</p>
                   <p className="text-xs text-slate-500 truncate">{t.name}</p>
@@ -370,20 +362,11 @@ function NotificationCard({ territory }: { territory: Territory }) {
 
       <div className="flex items-start gap-4">
         {/* Card thumbnail */}
-        {territory.card?.downloadUrl ? (
-          <div className="h-16 w-20 flex-shrink-0 overflow-hidden rounded-md bg-slate-100">
-            <img
-              src={territory.card.downloadUrl}
-              alt={territory.number}
-              loading="lazy"
-              className="h-full w-full object-cover"
-            />
-          </div>
-        ) : (
-          <div className="h-16 w-20 flex-shrink-0 rounded-md bg-slate-100 flex items-center justify-center">
-            <span className="text-xs text-slate-400">--</span>
-          </div>
-        )}
+        <SafeImage
+          src={territory.card?.downloadUrl}
+          alt={territory.number}
+          containerClassName="h-16 w-20 flex-shrink-0 relative overflow-hidden rounded-md bg-slate-100"
+        />
 
         {/* Info */}
         <div className="flex-1 min-w-0">

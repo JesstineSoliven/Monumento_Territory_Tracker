@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import type { TerritoryCard } from '../../shared/types'
+import SafeImage from '../../shared/components/SafeImage'
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -48,14 +49,11 @@ export default function CardThumbnail({
   return (
     <div className="relative rounded-lg border border-slate-200 bg-white shadow-sm overflow-hidden">
       {/* Image */}
-      <div className="aspect-[4/3] overflow-hidden bg-slate-100">
-        <img
-          src={card.downloadUrl}
-          alt={card.label}
-          loading="lazy"
-          className="h-full w-full object-cover"
-        />
-      </div>
+      <SafeImage
+        src={card.downloadUrl}
+        alt={card.label}
+        containerClassName="aspect-[4/3] relative overflow-hidden bg-slate-100"
+      />
 
       {/* Info */}
       <div className="p-3">

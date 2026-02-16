@@ -1,14 +1,47 @@
+import { lazy, Suspense } from 'react'
 import { createBrowserRouter, Navigate } from 'react-router-dom'
 import AuthGuard from '../auth/AuthGuard'
 import RoleGuard from '../auth/RoleGuard'
 import LoginPage from '../auth/LoginPage'
-import DashboardPage from '../features/dashboard/DashboardPage'
-import TerritoriesPage from '../features/territories/TerritoriesPage'
-import UsersPage from '../features/users/UsersPage'
-import TerritoryCardsPage from '../features/territory-cards/TerritoryCardsPage'
-import AnnouncePage from '../features/territories/AnnouncePage'
-import TerritoryDetail from '../features/territories/TerritoryDetail'
-import MonthlyReportPage from '../features/territories/MonthlyReportPage'
+
+// ---------------------------------------------------------------------------
+// Lazy-loaded page components — each gets its own chunk for faster initial load
+// ---------------------------------------------------------------------------
+
+const DashboardPage = lazy(() => import('../features/dashboard/DashboardPage'))
+const TerritoriesPage = lazy(() => import('../features/territories/TerritoriesPage'))
+const TerritoryDetail = lazy(() => import('../features/territories/TerritoryDetail'))
+const TerritoryCardsPage = lazy(() => import('../features/territory-cards/TerritoryCardsPage'))
+const AnnouncePage = lazy(() => import('../features/territories/AnnouncePage'))
+const MonthlyReportPage = lazy(() => import('../features/territories/MonthlyReportPage'))
+const UsersPage = lazy(() => import('../features/users/UsersPage'))
+
+// ---------------------------------------------------------------------------
+// Route-level loading fallback — shown while lazy chunks download
+// ---------------------------------------------------------------------------
+
+function PageLoader() {
+  return (
+    <div className="min-h-[60vh] flex items-center justify-center">
+      <div className="text-center">
+        <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-blue-600 border-t-transparent" />
+        <p className="mt-4 text-sm text-slate-500">Loading...</p>
+      </div>
+    </div>
+  )
+}
+
+function withSuspense(Component: React.LazyExoticComponent<React.ComponentType>) {
+  return (
+    <Suspense fallback={<PageLoader />}>
+      <Component />
+    </Suspense>
+  )
+}
+
+// ---------------------------------------------------------------------------
+// Router
+// ---------------------------------------------------------------------------
 
 export const router = createBrowserRouter([
   // --- Public routes ---
@@ -23,15 +56,15 @@ export const router = createBrowserRouter([
     children: [
       {
         path: '/',
-        element: <DashboardPage />,
+        element: withSuspense(DashboardPage),
       },
       {
         path: '/territories',
-        element: <TerritoriesPage />,
+        element: withSuspense(TerritoriesPage),
       },
       {
         path: '/territories/:id',
-        element: <TerritoryDetail />,
+        element: withSuspense(TerritoryDetail),
       },
 
       // --- Servant + Admin routes ---
@@ -40,15 +73,15 @@ export const router = createBrowserRouter([
         children: [
           {
             path: '/territory-cards',
-            element: <TerritoryCardsPage />,
+            element: withSuspense(TerritoryCardsPage),
           },
           {
             path: '/announce',
-            element: <AnnouncePage />,
+            element: withSuspense(AnnouncePage),
           },
           {
             path: '/reports',
-            element: <MonthlyReportPage />,
+            element: withSuspense(MonthlyReportPage),
           },
         ],
       },
@@ -59,7 +92,7 @@ export const router = createBrowserRouter([
         children: [
           {
             path: '/users',
-            element: <UsersPage />,
+            element: withSuspense(UsersPage),
           },
         ],
       },

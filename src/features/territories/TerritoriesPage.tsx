@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import type { Territory } from '../../shared/types'
 import { useAuth } from '../../shared/hooks/useAuth'
 import { subscribeToTerritories, subscribeToMyTerritories } from './territories.service'
+import SafeImage from '../../shared/components/SafeImage'
 
 export default function TerritoriesPage() {
   const { appUser } = useAuth()
@@ -155,20 +156,11 @@ function TerritoryCard({
       className="flex items-center gap-4 rounded-lg border border-slate-200 bg-white p-4 shadow-card hover:border-blue-300 hover:shadow-card-hover transition-all duration-200"
     >
       {/* Card thumbnail */}
-      {territory.card?.downloadUrl ? (
-        <div className="h-16 w-20 flex-shrink-0 overflow-hidden rounded-md bg-slate-100">
-          <img
-            src={territory.card.downloadUrl}
-            alt={territory.number}
-            loading="lazy"
-            className="h-full w-full object-cover"
-          />
-        </div>
-      ) : (
-        <div className="h-16 w-20 flex-shrink-0 rounded-md bg-slate-100 flex items-center justify-center">
-          <span className="text-xs text-slate-400">No card</span>
-        </div>
-      )}
+      <SafeImage
+        src={territory.card?.downloadUrl}
+        alt={territory.number}
+        containerClassName="h-16 w-20 flex-shrink-0 relative overflow-hidden rounded-md bg-slate-100"
+      />
 
       {/* Info */}
       <div className="flex-1 min-w-0">

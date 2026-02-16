@@ -4,6 +4,7 @@ import type { Territory, Report, ReportStatus } from '../../shared/types'
 import { useAuth } from '../../shared/hooks/useAuth'
 import { subscribeToTerritory, subscribeToReports, deriveReportStatus } from './territories.service'
 import ReportForm from './ReportForm'
+import SafeImage from '../../shared/components/SafeImage'
 
 export default function TerritoryDetail() {
   const { id } = useParams<{ id: string }>()
@@ -149,14 +150,13 @@ export default function TerritoryDetail() {
         {/* Left column: card image + territory info */}
         <div className="space-y-6">
           {/* Territory card image */}
-          {territory.card?.downloadUrl && (
-            <div className="rounded-lg border border-slate-200 overflow-hidden bg-white shadow-sm">
-              <img
-                src={territory.card.downloadUrl}
-                alt={`Territory card ${territory.number}`}
-                className="w-full object-contain"
-              />
-            </div>
+          {territory.card && (
+            <SafeImage
+              src={territory.card.downloadUrl}
+              alt={`Territory card ${territory.number}`}
+              className="w-full object-contain"
+              containerClassName="relative rounded-lg border border-slate-200 overflow-hidden bg-white shadow-sm"
+            />
           )}
 
           {/* Territory info */}

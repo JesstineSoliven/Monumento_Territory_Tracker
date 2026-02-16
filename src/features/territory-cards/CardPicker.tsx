@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import type { TerritoryCard } from '../../shared/types'
 import { subscribeToTerritoryCards } from './territory-cards.service'
+import SafeImage from '../../shared/components/SafeImage'
 
 interface CardPickerProps {
   selectedCardId: string | null
@@ -56,14 +57,11 @@ export default function CardPicker({ selectedCardId, onSelect }: CardPickerProps
                 : 'border-slate-200 hover:border-slate-300'
             }`}
           >
-            <div className="aspect-[4/3] overflow-hidden bg-slate-100">
-              <img
-                src={card.downloadUrl}
-                alt={card.label}
-                loading="lazy"
-                className="h-full w-full object-cover"
-              />
-            </div>
+            <SafeImage
+              src={card.downloadUrl}
+              alt={card.label}
+              containerClassName="aspect-[4/3] relative overflow-hidden bg-slate-100"
+            />
             <div className="p-2">
               <div className="flex items-center gap-1">
                 <p className="text-xs font-bold text-slate-900 truncate">

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import type { Territory, ReportStatus } from '../../shared/types'
 import { subscribeToTerritories, deriveReportStatus } from './territories.service'
 import AnnounceForm from './AnnounceForm'
+import SafeImage from '../../shared/components/SafeImage'
 
 export default function AnnouncePage() {
   const [territories, setTerritories] = useState<Territory[]>([])
@@ -143,20 +144,11 @@ function TerritoryRow({ territory }: { territory: Territory }) {
       isOverdue ? 'border-red-300' : 'border-slate-200'
     }`}>
       {/* Card thumbnail */}
-      {territory.card?.downloadUrl ? (
-        <div className="h-16 w-20 flex-shrink-0 overflow-hidden rounded-md bg-slate-100">
-          <img
-            src={territory.card.downloadUrl}
-            alt={territory.number}
-            loading="lazy"
-            className="h-full w-full object-cover"
-          />
-        </div>
-      ) : (
-        <div className="h-16 w-20 flex-shrink-0 rounded-md bg-slate-100 flex items-center justify-center">
-          <span className="text-xs text-slate-400">No card</span>
-        </div>
-      )}
+      <SafeImage
+        src={territory.card?.downloadUrl}
+        alt={territory.number}
+        containerClassName="h-16 w-20 flex-shrink-0 relative overflow-hidden rounded-md bg-slate-100"
+      />
 
       {/* Info */}
       <div className="flex-1 min-w-0">
