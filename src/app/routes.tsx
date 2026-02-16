@@ -15,6 +15,7 @@ const TerritoryCardsPage = lazy(() => import('../features/territory-cards/Territ
 const AnnouncePage = lazy(() => import('../features/territories/AnnouncePage'))
 const MonthlyReportPage = lazy(() => import('../features/territories/MonthlyReportPage'))
 const UsersPage = lazy(() => import('../features/users/UsersPage'))
+const SystemResetPage = lazy(() => import('../features/admin/SystemResetPage'))
 
 // ---------------------------------------------------------------------------
 // Route-level loading fallback — shown while lazy chunks download
@@ -93,6 +94,10 @@ export const router = createBrowserRouter([
           {
             path: '/users',
             element: withSuspense(UsersPage),
+          },
+          {
+            path: '/system-reset',
+            element: withSuspense(SystemResetPage),
           },
         ],
       },
